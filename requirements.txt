@@ -1,6 +1,7 @@
-flet==0.24.1
-pyinstaller==6.11.1
-aiohttp==3.10.10
-pydantic-settings==2.6.1
-pillow==11.0.0
-flake8==7.1.1
+flet
+pyinstaller
+aiohttp
+pydantic-settings
+pillow
+flake8
+wemake-python-styleguide
