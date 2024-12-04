@@ -11,3 +11,7 @@
 ### Welcome page
 
 ![Welcome page overview](/images/welcomePage.png)
+
+### Sign-in page
+
+![Sign-in page overview](/images/signInPage.png)
