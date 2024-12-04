@@ -1,8 +1,15 @@
-import flet as ft
+from src import ft
+from src import WelcomePage
 
 
 def main(page: ft.Page):
-    page.add(ft.SafeArea(ft.Text("Hello, Flet!")))
+    """Главная функция запуска приложения."""
+    WelcomePage(page).display(action=None)
+    page.update()
 
 
-ft.app(main)
+ft.app(
+    target=main,
+    view=ft.AppView.WEB_BROWSER,
+    assets_dir="../AdminsProject/assets/",
+)

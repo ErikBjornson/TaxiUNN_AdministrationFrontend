@@ -7,3 +7,7 @@
 
 
 ## Project Overview
+
+### Welcome page
+
+![Welcome page overview](/images/welcomePage.png)
