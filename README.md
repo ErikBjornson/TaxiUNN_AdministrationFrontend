@@ -15,3 +15,7 @@
 ### Sign-in page
 
 ![Sign-in page overview](/images/signInPage.png)
+
+### Profile page
+
+![Profile page overview](/images/profilePage.png)
