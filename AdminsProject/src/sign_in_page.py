@@ -1,14 +1,15 @@
-from . import ft, dp, SCREEN_SIZE
+from . import ft, dp, send_login_request, SCREEN_SIZE
 
 
 class SignInPage:
     """Форма страницы авторизации администратора."""
 
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self, page: ft.Page, on_success) -> None:
         """Инициализация страницы авторизации."""
         self.page = page
         self.page.title = "Войти в аккаунт"
         self.page.bgcolor = "#FFFFFF"
+        self.on_success = on_success
 
         self.top_label = ft.Text(
             value="Вход в аккаунт\nадминистратора",
@@ -125,7 +126,38 @@ class SignInPage:
             bgcolor="#4862E5",
             color="#FFFFFF",
             visible=True,
+            on_click=self.on_login,
         )
+
+    async def on_login(self, action) -> None:
+        """Метод валидации и проверки успешности входа."""
+        email = self.email_field.content.value
+        password = self.password_field.content.value
+
+        if not email or password:
+            return
+
+        await self.process_login(email, password)
+
+    async def process_login(self, email, password) -> None:
+        """Метод, сохраняющий токен пользователя в сессии."""
+        try:
+            response = await send_login_request(email, password)
+            if response.get("access"):
+                access_token = response.get("access")
+
+                if access_token:
+                    self.page.session.set("access_token", access_token)
+                    self.clear_fields()
+                    await self.on_success(action=None)
+        except Exception:
+            return
+
+    def clear_fields(self) -> None:
+        """Метод очистки полей ввода."""
+        self.email_field.content.value = ""
+        self.password_field.content.value = ""
+        self.page.update()
 
     async def display(self, action) -> None:
         """Метод отображения формы на экране."""

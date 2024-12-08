@@ -116,7 +116,7 @@ class ProfilePage:
         self.page.title = "Профиль"
         self.page.bgcolor = "#FFFFFF"
 
-    def display(self, action) -> None:
+    async def display(self, action) -> None:
         """Метод отображения формы на экране."""
         self.page.clean()
         self.page.add(
