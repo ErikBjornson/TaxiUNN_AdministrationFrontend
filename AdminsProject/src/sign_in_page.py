@@ -4,12 +4,12 @@ from . import ft, dp, send_login_request, SCREEN_SIZE
 class SignInPage:
     """Форма страницы авторизации администратора."""
 
-    def __init__(self, page: ft.Page, on_success) -> None:
+    def __init__(self, page: ft.Page, on_success, to_recovery) -> None:
         """Инициализация страницы авторизации."""
         self.page = page
-        self.page.title = "Войти в аккаунт"
         self.page.bgcolor = "#FFFFFF"
         self.on_success = on_success
+        self.to_recovery = to_recovery
 
         self.top_label = ft.Text(
             value="Вход в аккаунт\nадминистратора",
@@ -106,6 +106,7 @@ class SignInPage:
                 color="#4862E5",
             ),
             visible=True,
+            on_click=self.to_recovery,
         )
 
         self.sign_in_button = ft.ElevatedButton(
@@ -133,9 +134,6 @@ class SignInPage:
         """Метод валидации и проверки успешности входа."""
         email = self.email_field.content.value
         password = self.password_field.content.value
-
-        if not email or password:
-            return
 
         await self.process_login(email, password)
 
@@ -183,3 +181,5 @@ class SignInPage:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
         )
+        self.page.title = "Войти в аккаунт"
+        self.page.update()

@@ -113,7 +113,6 @@ class ProfilePage:
     def __init__(self, page: ft.Page) -> None:
         """Инициализация страницы профиля."""
         self.page = page
-        self.page.title = "Профиль"
         self.page.bgcolor = "#FFFFFF"
 
     async def display(self, action) -> None:
@@ -156,3 +155,5 @@ class ProfilePage:
                 width=dp(SCREEN_SIZE[0]),
             ),
         )
+        self.page.title = "Профиль"
+        self.page.update()

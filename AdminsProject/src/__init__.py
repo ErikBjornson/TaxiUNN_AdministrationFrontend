@@ -8,6 +8,7 @@ from .utils import (
 from .welcome_page import WelcomePage
 from .sign_in_page import SignInPage
 from .profile_page import ProfilePage
+from .password_recovery_page import PasswordRecoveryPage
 
 __all__ = [
     'ft',
@@ -17,4 +18,5 @@ __all__ = [
     'WelcomePage',
     'SignInPage',
     'ProfilePage',
+    'PasswordRecoveryPage',
 ]

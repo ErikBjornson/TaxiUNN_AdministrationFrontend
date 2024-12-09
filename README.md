@@ -19,3 +19,7 @@
 ### Profile page
 
 ![Profile page overview](/images/profilePage.png)
+
+### Password recovery page
+
+![Password recovery page overview](/images/passwordRecPage.png)
