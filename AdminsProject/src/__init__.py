@@ -1,10 +1,13 @@
 import flet as ft
+from typing import Optional
 
 from .utils import (
     dp,
     send_login_request,
     SCREEN_SIZE,
+    errors,
 )
+
 from .welcome_page import WelcomePage
 from .sign_in_page import SignInPage
 from .profile_page import ProfilePage
@@ -15,8 +18,10 @@ __all__ = [
     'dp',
     'send_login_request',
     'SCREEN_SIZE',
+    'errors',
     'WelcomePage',
     'SignInPage',
     'ProfilePage',
     'PasswordRecoveryPage',
+    'Optional',
 ]

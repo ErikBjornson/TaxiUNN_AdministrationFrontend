@@ -1,4 +1,11 @@
-from . import ft, dp, send_login_request, SCREEN_SIZE
+from . import (
+    ft,
+    Optional,
+    dp,
+    send_login_request,
+    SCREEN_SIZE,
+    errors,
+)
 
 
 class SignInPage:
@@ -16,7 +23,7 @@ class SignInPage:
             size=dp(50),
             font_family="Inter",
             text_align=ft.TextAlign.CENTER,
-            top=dp(194) - dp(50) / 2,
+            top=dp(144) - dp(50) / 2,
             left=dp(745),
             width=dp(429),
             height=dp(110) + dp(50) + dp(10),
@@ -31,7 +38,7 @@ class SignInPage:
             size=dp(24),
             font_family="Inter",
             text_align=ft.TextAlign.LEFT,
-            top=dp(354),
+            top=dp(304),
             left=dp(566) + dp(28) + dp(10),
             width=dp(732),
             height=dp(32),
@@ -55,7 +62,7 @@ class SignInPage:
                 multiline=False,
                 border_width=0,
             ),
-            top=dp(354) + dp(32) + dp(10),
+            top=dp(304) + dp(32) + dp(10),
             left=dp(566) + dp(28),
             width=dp(732),
             height=dp(80),
@@ -66,7 +73,7 @@ class SignInPage:
             size=dp(24),
             font_family="Inter",
             text_align=ft.TextAlign.LEFT,
-            top=dp(532),
+            top=dp(482),
             left=dp(566) + dp(28) + dp(10),
             width=dp(732),
             height=dp(32),
@@ -92,7 +99,7 @@ class SignInPage:
                 can_reveal_password=True,
                 border_width=0,
             ),
-            top=dp(532) + dp(32) + dp(10),
+            top=dp(482) + dp(32) + dp(10),
             left=dp(566) + dp(28),
         )
 
@@ -100,7 +107,7 @@ class SignInPage:
             text="Забыли пароль?",
             width=dp(200),
             height=dp(30),
-            top=dp(532) + dp(32) + dp(100),
+            top=dp(482) + dp(32) + dp(100),
             left=dp(566) + dp(28) - dp(10),
             style=ft.ButtonStyle(
                 color="#4862E5",
@@ -109,11 +116,23 @@ class SignInPage:
             on_click=self.to_recovery,
         )
 
+        self.error_label = ft.Text(
+            value=" ",
+            size=dp(24),
+            font_family="Inter",
+            text_align=ft.TextAlign.CENTER,
+            top=dp(670),
+            left=dp(566) + dp(28),
+            width=dp(732),
+            height=dp(32),
+            color="#F44336",
+        )
+
         self.sign_in_button = ft.ElevatedButton(
             text="Войти",
             width=dp(420),
             height=dp(80),
-            top=dp(806),
+            top=dp(756),
             left=dp(750),
             style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=dp(18)),
@@ -137,24 +156,35 @@ class SignInPage:
 
         await self.process_login(email, password)
 
-    async def process_login(self, email, password) -> None:
+    async def process_login(self, email, password) -> Optional[Exception]:
         """Метод, сохраняющий токен пользователя в сессии."""
         try:
             response = await send_login_request(email, password)
             if response.get("access"):
-                access_token = response.get("access")
+                access_token = response.get("access", "#43A048")
 
                 if access_token:
                     self.page.session.set("access_token", access_token)
                     self.clear_fields()
                     await self.on_success(action=None)
-        except Exception:
-            return
+                else:
+                    raise ValueError("Invalid access token!")
+
+            else:
+                message = response[list(response.keys())[0]][0]
+                self.display_error(message)
+        except Exception as ex:
+            return ex
 
     def clear_fields(self) -> None:
         """Метод очистки полей ввода."""
         self.email_field.content.value = ""
         self.password_field.content.value = ""
+        self.page.update()
+
+    def display_error(self, message: str) -> None:
+        """Метод для отображения ошибок ввода данных."""
+        self.error_label.value = errors[message]
         self.page.update()
 
     async def display(self, action) -> None:
@@ -171,6 +201,7 @@ class SignInPage:
                             self.password_label,
                             self.password_field,
                             self.change_password_button,
+                            self.error_label,
                             self.sign_in_button,
                         ],
                         width=dp(SCREEN_SIZE[0]),

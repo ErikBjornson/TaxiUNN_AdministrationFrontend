@@ -4,6 +4,17 @@ SCREEN_SIZE = 1920, 1080
 
 BASE_URL = "http://127.0.0.1:8000"
 
+errors = {
+    "Invalid credentials.":
+        "Неверный пароль",
+
+    "Enter a valid email address.":
+        "Некорректный email",
+
+    "An account with this email does not exist.":
+        "Пользователь с таким email не существует",
+}
+
 
 def dp(value: int) -> float:
     """Функция для масштабирования элементов GUI."""
@@ -22,9 +33,4 @@ async def send_login_request(email, password):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload, headers=hdrs) as response:
-            if response.status == 200:
-                return await response.json()
-            error_message = await response.text()
-            raise ConnectionError(
-                f"Ошибка входа: {error_message}",
-            )
+            return await response.json()
