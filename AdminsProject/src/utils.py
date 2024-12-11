@@ -31,6 +31,7 @@ async def send_login_request(email, password):
         "email": email,
         "password": password,
     }
+
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload, headers=hdrs) as response:
             return await response.json()
