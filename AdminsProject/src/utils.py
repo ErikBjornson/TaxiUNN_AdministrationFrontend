@@ -6,13 +6,16 @@ BASE_URL = "http://127.0.0.1:8000"
 
 errors = {
     "Invalid credentials.":
-        "Неверный пароль",
+        "Неверный пароль!",
 
     "Enter a valid email address.":
-        "Некорректный email",
+        "Некорректный email!",
 
     "An account with this email does not exist.":
-        "Пользователь с таким email не существует",
+        "Пользователь с таким email не существует!",
+
+    "empty_fields":
+        "Все поля должны быть заполнены!",
 }
 
 

@@ -79,7 +79,7 @@ class PasswordRecoveryPage:
             visible=True,
         )
 
-    async def display(self, action) -> None:
+    def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
         self.page.add(
@@ -102,3 +102,5 @@ class PasswordRecoveryPage:
         )
         self.page.title = "Восстановление пароля"
         self.page.update()
+
+        return self.page.controls, self.page.bgcolor
