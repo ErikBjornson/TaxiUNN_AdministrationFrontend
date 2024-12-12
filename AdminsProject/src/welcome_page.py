@@ -4,11 +4,10 @@ from . import ft, dp, SCREEN_SIZE
 class WelcomePage:
     """Форма приветственной страницы."""
 
-    def __init__(self, page: ft.Page, on_switch_to_sign_in) -> None:
+    def __init__(self, page: ft.Page) -> None:
         """Инициализация приветственной страницы."""
         self.page = page
         self.page.bgcolor = "#FFFFFF"
-        self.on_switch_to_sign_in = on_switch_to_sign_in
 
         self.image = ft.Image(
             src="../assets/welcomePageImage.png",
@@ -65,7 +64,11 @@ class WelcomePage:
             on_click=self.on_switch_to_sign_in,
         )
 
-    async def display(self, action) -> None:
+    def on_switch_to_sign_in(self, action) -> None:
+        """Переход на экран авторизации - уход с приветственной страницы."""
+        self.page.go("/login")
+
+    def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
         self.page.add(
@@ -104,3 +107,5 @@ class WelcomePage:
         )
         self.page.title = "Добро пожаловать!"
         self.page.update()
+
+        return self.page.controls, self.page.bgcolor

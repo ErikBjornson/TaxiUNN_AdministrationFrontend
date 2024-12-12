@@ -37,7 +37,7 @@ class Frame(ft.Container):
                 ),
             ],
         )
-        self.top = dp(551)
+        self.top = dp(501)
         self.left = dp(left)
         self.width = dp(246)
         self.height = dp(312)
@@ -60,8 +60,8 @@ class ProfilePhoto(ft.Container):
                 bgcolor="#D0D0D0",
             ),
         )
-        self.top = dp(160)
-        self.left = dp(877)
+        self.top = dp(110)
+        self.left = dp(879)
         self.width = dp(166)
         self.height = dp(166)
 
@@ -80,7 +80,7 @@ class ProfileInfo(ft.Container):
                     size=dp(40),
                     font_family="Inter",
                     text_align=ft.TextAlign.CENTER,
-                    width=dp(280),
+                    width=dp(400),
                     height=dp(50),
                     weight=dp(600),
                     color="#1C1C1C",
@@ -92,7 +92,7 @@ class ProfileInfo(ft.Container):
                     size=dp(24),
                     font_family="Inter",
                     text_align=ft.TextAlign.CENTER,
-                    width=dp(280),
+                    width=dp(400),
                     height=dp(35),
                     weight=dp(400),
                     color="#A0A0A0",
@@ -101,9 +101,9 @@ class ProfileInfo(ft.Container):
                 ),
             ],
         )
-        self.top = dp(366)
-        self.left = dp(822)
-        self.width = dp(280)
+        self.top = dp(296)
+        self.left = dp(762)
+        self.width = dp(400)
         self.height = dp(90)
 
 
@@ -115,12 +115,33 @@ class ProfilePage:
         self.page = page
         self.page.bgcolor = "#FFFFFF"
 
-    async def display(self, action) -> None:
+        self.switch_to_login_button = ft.ElevatedButton(
+            text="Выйти",
+            width=dp(200),
+            height=dp(84),
+            top=dp(80),
+            left=dp(160),
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=dp(40)),
+            ),
+            bgcolor="#4862E5",
+            color="#FFFFFF",
+            visible=True,
+            on_click=self.to_login_page,
+        )
+
+    def to_login_page(self, action):
+        """Метод logout - выход из аккунта и возврат к странице авторизации."""
+        self.page.session.set("access_token", "")
+        self.page.go("/login")
+
+    def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
         self.page.add(
             ft.Stack(
                 controls=[
+                    self.switch_to_login_button,
                     ProfilePhoto(),
                     ProfileInfo(
                         name="Lion Alex",
@@ -157,3 +178,5 @@ class ProfilePage:
         )
         self.page.title = "Профиль"
         self.page.update()
+
+        return self.page.controls, self.page.bgcolor

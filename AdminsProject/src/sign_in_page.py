@@ -11,12 +11,10 @@ from . import (
 class SignInPage:
     """Форма страницы авторизации администратора."""
 
-    def __init__(self, page: ft.Page, on_success, to_recovery) -> None:
+    def __init__(self, page: ft.Page) -> None:
         """Инициализация страницы авторизации."""
         self.page = page
         self.page.bgcolor = "#FFFFFF"
-        self.on_success = on_success
-        self.to_recovery = to_recovery
 
         self.top_label = ft.Text(
             value="Вход в аккаунт\nадминистратора",
@@ -154,10 +152,13 @@ class SignInPage:
         email = self.email_field.content.value
         password = self.password_field.content.value
 
+        if not email or not password:
+            self.display_error("empty_fields")
+
         await self.process_login(email, password)
 
     async def process_login(self, email, password) -> Optional[Exception]:
-        """Метод, сохраняющий токен пользователя в сессии."""
+        """Метод, сохраняющий токен пользователя в сессии страницы."""
         try:
             response = await send_login_request(email, password)
             if response.get("access"):
@@ -166,7 +167,11 @@ class SignInPage:
                 if access_token:
                     self.page.session.set("access_token", access_token)
                     self.clear_fields()
-                    await self.on_success(action=None)
+
+                    await self.on_success(
+                        action=None,
+                    )
+
                 else:
                     raise ValueError("Invalid access token!")
 
@@ -180,6 +185,7 @@ class SignInPage:
         """Метод очистки полей ввода."""
         self.email_field.content.value = ""
         self.password_field.content.value = ""
+        self.error_label.value = ""
         self.page.update()
 
     def display_error(self, message: str) -> None:
@@ -187,7 +193,15 @@ class SignInPage:
         self.error_label.value = errors[message]
         self.page.update()
 
-    async def display(self, action) -> None:
+    async def on_success(self, action) -> None:
+        """Переход на экран профиля - авторизация прошла успешно."""
+        await self.page.go("/profile")
+
+    def to_recovery(self, action) -> None:
+        """Переход на страницу восстановления пароля."""
+        self.page.go("/password-recovery")
+
+    def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
         self.page.add(
@@ -214,3 +228,5 @@ class SignInPage:
         )
         self.page.title = "Войти в аккаунт"
         self.page.update()
+
+        return self.page.controls, self.page.bgcolor
