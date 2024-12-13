@@ -1,4 +1,12 @@
-from . import ft, dp, SCREEN_SIZE
+from . import (
+    ft,
+    dp,
+    SCREEN_SIZE,
+    TopLabel,
+    InterfaceLabel,
+    InputField,
+    EnterButton,
+)
 
 
 class PasswordRecoveryPage:
@@ -9,75 +17,34 @@ class PasswordRecoveryPage:
         self.page = page
         self.page.bgcolor = "#FFFFFF"
 
-        self.top_label = ft.Text(
-            value="Восстановление\nпароля",
-            size=dp(50),
-            font_family="Inter",
-            text_align=ft.TextAlign.CENTER,
-            top=dp(194) - dp(50) / 2,
-            left=dp(745),
-            width=dp(429),
-            height=dp(110) + dp(50) + dp(10),
-            weight=dp(600),
-            color="#1C1C1C",
-            max_lines=2,
-            visible=True,
+        self.email_field = InputField(
+            hint_text="Pochta@gmail.com",
+            is_password=False,
+            top=dp(414) + dp(32) + dp(10),
         )
 
-        self.email_label = ft.Text(
-            value="Почта",
-            size=dp(24),
-            font_family="Inter",
-            text_align=ft.TextAlign.LEFT,
-            top=dp(354),
-            left=dp(566) + dp(28) + dp(10),
-            width=dp(732),
-            height=dp(32),
-            color="#1C1C1C",
+        self.error_label = InterfaceLabel(
+            value=" ",
+            top=580,
+            align=ft.TextAlign.CENTER,
+            color="#F44336",
         )
 
-        self.email_field = ft.Container(
-            content=ft.TextField(
-                width=dp(732),
-                height=dp(80),
-                border_radius=dp(16),
-                content_padding=dp(16),
-                bgcolor="#E8E8E8",
-                color="#000000",
-                hint_style=ft.TextStyle(
-                    size=dp(26),
-                    font_family="Inter",
-                    color="#6C6C6C",
-                ),
-                hint_text="Pochta@gmail.com",
-                multiline=False,
-                border_width=0,
-            ),
-            top=dp(354) + dp(32) + dp(10),
-            left=dp(566) + dp(28),
-            width=dp(732),
-            height=dp(80),
-        )
+    def clear_fields(self) -> None:
+        """Метод очистки полей ввода и надписей."""
+        self.email_field.clear()
+        self.error_label.clear()
 
-        self.send_code_button = ft.ElevatedButton(
-            text="Отправить код",
-            width=dp(420),
-            height=dp(80),
-            top=dp(806),
-            left=dp(750),
-            style=ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(radius=dp(18)),
-                padding=ft.Padding(
-                    left=dp(60),
-                    right=dp(60),
-                    top=dp(20),
-                    bottom=dp(20),
-                ),
-            ),
-            bgcolor="#4862E5",
-            color="#FFFFFF",
-            visible=True,
-        )
+        self.page.update()
+
+    def to_verify_page(self, action) -> None:
+        """Метод для перехода на страницу для ввода кода верификации."""
+        if not self.email_field.get_value():
+            self.error_label.display_error("empty_fields")
+            return
+
+        self.clear_fields()
+        self.page.go("/password-recovery/verify")
 
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
@@ -87,13 +54,24 @@ class PasswordRecoveryPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            self.top_label,
-                            self.email_label,
+                            TopLabel(
+                                value="Восстановление\nпароля",
+                                top=264,
+                            ),
+                            InterfaceLabel(
+                                value="Почта",
+                                top=414,
+                            ),
                             self.email_field,
-                            self.send_code_button,
+                            self.error_label,
+                            EnterButton(
+                                text="Отправить код",
+                                top=670,
+                                click=self.to_verify_page,
+                            ),
                         ],
-                        width=dp(SCREEN_SIZE[0]),
-                        height=dp(SCREEN_SIZE[1]),
+                        width=SCREEN_SIZE[0],
+                        height=SCREEN_SIZE[1],
                     ),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,

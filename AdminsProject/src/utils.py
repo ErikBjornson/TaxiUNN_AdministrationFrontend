@@ -1,21 +1,27 @@
 import aiohttp
 
-SCREEN_SIZE = 1920, 1080
+SCREEN_SIZE = 1250, 720
 
 BASE_URL = "http://127.0.0.1:8000"
 
 errors = {
     "Invalid credentials.":
-        "Неверный пароль!",
+        "Неверный пароль",
 
     "Enter a valid email address.":
-        "Некорректный email!",
+        "Некорректный email",
 
     "An account with this email does not exist.":
-        "Пользователь с таким email не существует!",
+        "Пользователь с таким email не существует",
 
     "empty_fields":
-        "Все поля должны быть заполнены!",
+        "Все поля должны быть заполнены",
+
+    "different_passwords":
+        "Введённые пароли не совпадают",
+
+    "to_short_passwords":
+        "Пароль должен содержать не менее 8 символов",
 }
 
 

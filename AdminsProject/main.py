@@ -4,10 +4,12 @@ from src import (
     SignInPage,
     ProfilePage,
     PasswordRecoveryPage,
+    PasswordRecoveryVerifyPage,
+    ChangePasswordPage,
 )
 
 
-class MainFrame:
+class Navigation:
     """Главный класс, управляющий навигацией между страницами."""
 
     def __init__(self, page: ft.Page) -> None:
@@ -19,6 +21,8 @@ class MainFrame:
             "/login": SignInPage(page),
             "/profile": ProfilePage(page),
             "/password-recovery": PasswordRecoveryPage(page),
+            "/password-recovery/verify": PasswordRecoveryVerifyPage(page),
+            "/password-recovery/change": ChangePasswordPage(page),
         }
         self.page.on_route_change = self.change_route
         self.page.go(self.page.route)
@@ -39,12 +43,12 @@ class MainFrame:
 
 async def main(page: ft.Page):
     """Главная функция запуска приложения."""
-    MainFrame(page)
+    Navigation(page)
     page.update()
 
 
 ft.app(
     target=main,
     view=ft.AppView.WEB_BROWSER,
-    assets_dir="../AdminsProject/assets/",
+    assets_dir="assets",
 )

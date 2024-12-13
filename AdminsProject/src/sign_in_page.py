@@ -4,7 +4,11 @@ from . import (
     dp,
     send_login_request,
     SCREEN_SIZE,
-    errors,
+    TopLabel,
+    InterfaceLabel,
+    InputField,
+    LinkButton,
+    EnterButton,
 )
 
 
@@ -16,135 +20,23 @@ class SignInPage:
         self.page = page
         self.page.bgcolor = "#FFFFFF"
 
-        self.top_label = ft.Text(
-            value="Вход в аккаунт\nадминистратора",
-            size=dp(50),
-            font_family="Inter",
-            text_align=ft.TextAlign.CENTER,
-            top=dp(144) - dp(50) / 2,
-            left=dp(745),
-            width=dp(429),
-            height=dp(110) + dp(50) + dp(10),
-            weight=dp(600),
-            color="#1C1C1C",
-            max_lines=2,
-            visible=True,
-        )
-
-        self.email_label = ft.Text(
-            value="Почта",
-            size=dp(24),
-            font_family="Inter",
-            text_align=ft.TextAlign.LEFT,
-            top=dp(304),
-            left=dp(566) + dp(28) + dp(10),
-            width=dp(732),
-            height=dp(32),
-            color="#1C1C1C",
-        )
-
-        self.email_field = ft.Container(
-            content=ft.TextField(
-                width=dp(732),
-                height=dp(80),
-                border_radius=dp(16),
-                content_padding=dp(16),
-                bgcolor="#E8E8E8",
-                color="#000000",
-                hint_style=ft.TextStyle(
-                    size=dp(26),
-                    font_family="Inter",
-                    color="#6C6C6C",
-                ),
-                hint_text="Pochta@gmail.com",
-                multiline=False,
-                border_width=0,
-            ),
+        self.email_field = InputField(
+            hint_text="Pochta@gmail.com",
+            is_password=False,
             top=dp(304) + dp(32) + dp(10),
-            left=dp(566) + dp(28),
-            width=dp(732),
-            height=dp(80),
         )
 
-        self.password_label = ft.Text(
-            value="Введите пароль",
-            size=dp(24),
-            font_family="Inter",
-            text_align=ft.TextAlign.LEFT,
-            top=dp(482),
-            left=dp(566) + dp(28) + dp(10),
-            width=dp(732),
-            height=dp(32),
-            color="#1C1C1C",
-        )
-
-        self.password_field = ft.Container(
-            content=ft.TextField(
-                width=dp(732),
-                height=dp(80),
-                border_radius=dp(16),
-                content_padding=dp(16),
-                bgcolor="#E8E8E8",
-                color="#000000",
-                hint_style=ft.TextStyle(
-                    size=dp(26),
-                    font_family="Inter",
-                    color="#6C6C6C",
-                ),
-                hint_text="Пароль",
-                multiline=False,
-                password=True,
-                can_reveal_password=True,
-                border_width=0,
-            ),
+        self.password_field = InputField(
+            hint_text="Пароль",
+            is_password=True,
             top=dp(482) + dp(32) + dp(10),
-            left=dp(566) + dp(28),
         )
 
-        self.change_password_button = ft.TextButton(
-            text="Забыли пароль?",
-            width=dp(200),
-            height=dp(30),
-            top=dp(482) + dp(32) + dp(100),
-            left=dp(566) + dp(28) - dp(10),
-            style=ft.ButtonStyle(
-                color="#4862E5",
-            ),
-            visible=True,
-            on_click=self.to_recovery,
-        )
-
-        self.error_label = ft.Text(
+        self.error_label = InterfaceLabel(
             value=" ",
-            size=dp(24),
-            font_family="Inter",
-            text_align=ft.TextAlign.CENTER,
-            top=dp(670),
-            left=dp(566) + dp(28),
-            width=dp(732),
-            height=dp(32),
+            top=670,
+            align=ft.TextAlign.CENTER,
             color="#F44336",
-        )
-
-        self.sign_in_button = ft.ElevatedButton(
-            text="Войти",
-            width=dp(420),
-            height=dp(80),
-            top=dp(756),
-            left=dp(750),
-            style=ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(radius=dp(18)),
-                padding=ft.Padding(
-                    left=dp(60),
-                    right=dp(60),
-                    top=dp(20),
-                    bottom=dp(20),
-                ),
-            ),
-            bgcolor="#4862E5",
-            color="#FFFFFF",
-            visible=True,
-            on_click=self.on_login,
         )
 
     async def on_login(self, action) -> None:
@@ -153,7 +45,7 @@ class SignInPage:
         password = self.password_field.content.value
 
         if not email or not password:
-            self.display_error("empty_fields")
+            self.error_label.display_error("empty_fields")
 
         await self.process_login(email, password)
 
@@ -162,7 +54,7 @@ class SignInPage:
         try:
             response = await send_login_request(email, password)
             if response.get("access"):
-                access_token = response.get("access", "#43A048")
+                access_token = response.get("access")
 
                 if access_token:
                     self.page.session.set("access_token", access_token)
@@ -177,20 +69,16 @@ class SignInPage:
 
             else:
                 message = response[list(response.keys())[0]][0]
-                self.display_error(message)
+                self.error_label.display_error(message)
         except Exception as ex:
             return ex
 
     def clear_fields(self) -> None:
-        """Метод очистки полей ввода."""
-        self.email_field.content.value = ""
-        self.password_field.content.value = ""
-        self.error_label.value = ""
-        self.page.update()
+        """Метод очистки полей ввода и надписей."""
+        self.email_field.clear()
+        self.password_field.clear()
+        self.error_label.clear()
 
-    def display_error(self, message: str) -> None:
-        """Метод для отображения ошибок ввода данных."""
-        self.error_label.value = errors[message]
         self.page.update()
 
     async def on_success(self, action) -> None:
@@ -199,6 +87,7 @@ class SignInPage:
 
     def to_recovery(self, action) -> None:
         """Переход на страницу восстановления пароля."""
+        self.clear_fields()
         self.page.go("/password-recovery")
 
     def display(self, action) -> tuple[list[ft.Control], str]:
@@ -209,17 +98,35 @@ class SignInPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            self.top_label,
-                            self.email_label,
+                            TopLabel(
+                                value="Вход в аккаунт\nадминистратора",
+                                top=144,
+                            ),
+                            InterfaceLabel(
+                                value="Почта",
+                                top=304,
+                            ),
                             self.email_field,
-                            self.password_label,
+                            InterfaceLabel(
+                                value="Введите пароль",
+                                top=482,
+                            ),
                             self.password_field,
-                            self.change_password_button,
+                            LinkButton(
+                                text="Забыли пароль?",
+                                top=dp(482) + dp(32) + dp(100),
+                                left=dp(566) + dp(28) - dp(10),
+                                click=self.to_recovery,
+                            ),
                             self.error_label,
-                            self.sign_in_button,
+                            EnterButton(
+                                text="Войти",
+                                top=750,
+                                click=self.on_login,
+                            ),
                         ],
-                        width=dp(SCREEN_SIZE[0]),
-                        height=dp(SCREEN_SIZE[1]),
+                        width=SCREEN_SIZE[0],
+                        height=SCREEN_SIZE[1],
                     ),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,

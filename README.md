@@ -23,3 +23,11 @@
 ### Password recovery page
 
 ![Password recovery page overview](/images/passwordRecPage.png)
+
+### Password recovery - verify page
+
+![Password recovery verify page overview](/images/passwordRecVerifyPage.png)
+
+### Password recovery - setting new password page
+
+![Password recovery setting new password page overview](/images/passwordRecNewPassPage.png)
