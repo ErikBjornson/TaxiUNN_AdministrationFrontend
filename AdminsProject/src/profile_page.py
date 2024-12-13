@@ -1,48 +1,6 @@
 from . import ft, dp, SCREEN_SIZE
 
 
-class Frame(ft.Container):
-    """Вспомогательный класс - создаёт группу ft.Image() + ft.Text()."""
-
-    def __init__(self, path: str, label: str, left: int) -> None:
-        """Инициализация группы."""
-        super().__init__()
-
-        self.content = ft.Column(
-            controls=[
-                ft.Container(
-                    content=ft.Image(
-                        src=path,
-                        width=dp(246),
-                        height=dp(246),
-                        border_radius=ft.border_radius.all(dp(18)),
-                        visible=True,
-                    ),
-                    border=ft.border.all(dp(3)),
-                    border_radius=ft.border_radius.all(dp(18)),
-                    width=dp(246),
-                    height=dp(246),
-                ),
-                ft.Text(
-                    value=label,
-                    size=dp(20),
-                    font_family="Inter",
-                    text_align=ft.TextAlign.CENTER,
-                    width=dp(246),
-                    height=dp(48) + dp(20),
-                    weight=dp(500),
-                    color="#1C1C1C",
-                    max_lines=2,
-                    visible=True,
-                ),
-            ],
-        )
-        self.top = dp(501)
-        self.left = dp(left)
-        self.width = dp(246)
-        self.height = dp(312)
-
-
 class ProfilePhoto(ft.Container):
     """Класс, создающий место для фотографии профиля."""
 
@@ -61,7 +19,7 @@ class ProfilePhoto(ft.Container):
             ),
         )
         self.top = dp(110)
-        self.left = dp(879)
+        self.left = dp(854)
         self.width = dp(166)
         self.height = dp(166)
 
@@ -102,9 +60,51 @@ class ProfileInfo(ft.Container):
             ],
         )
         self.top = dp(296)
-        self.left = dp(762)
+        self.left = dp(737)
         self.width = dp(400)
         self.height = dp(90)
+
+
+class Frame(ft.Container):
+    """Вспомогательный класс - создаёт группу ft.Image() + ft.Text()."""
+
+    def __init__(self, path: str, label: str, left: int) -> None:
+        """Инициализация группы."""
+        super().__init__()
+
+        self.content = ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.Image(
+                        src=path,
+                        width=dp(246),
+                        height=dp(246),
+                        border_radius=ft.border_radius.all(dp(18)),
+                        visible=True,
+                    ),
+                    border=ft.border.all(dp(3)),
+                    border_radius=ft.border_radius.all(dp(18)),
+                    width=dp(246),
+                    height=dp(246),
+                ),
+                ft.Text(
+                    value=label,
+                    size=dp(20),
+                    font_family="Inter",
+                    text_align=ft.TextAlign.CENTER,
+                    width=dp(246),
+                    height=dp(48) + dp(20),
+                    weight=dp(500),
+                    color="#1C1C1C",
+                    max_lines=2,
+                    visible=True,
+                ),
+            ],
+        )
+        self.top = dp(581)
+        self.left = dp(left)
+        self.width = dp(246)
+        self.height = dp(312)
 
 
 class ProfilePage:
@@ -150,30 +150,30 @@ class ProfilePage:
                     Frame(
                         path="../assets/clientsWorkImage.png",
                         label="Работа с клиентами",
-                        left=265,
+                        left=240,
                     ),
                     Frame(
                         path="../assets/incomeWorkImage.png",
                         label="Работа с доходами",
-                        left=551,
+                        left=526,
                     ),
                     Frame(
                         path="../assets/tariffWorkImage.png",
                         label="Работа с тарифами",
-                        left=837,
+                        left=812,
                     ),
                     Frame(
                         path="../assets/addingDriversImage.png",
                         label="Добавление\nводителей",
-                        left=1123,
+                        left=1098,
                     ),
                     Frame(
                         path="../assets/addingAdminsImage.png",
                         label="Добавление новых\nадминистраторов",
-                        left=1409,
+                        left=1384,
                     ),
                 ],
-                width=dp(SCREEN_SIZE[0]),
+                width=SCREEN_SIZE[0],
             ),
         )
         self.page.title = "Профиль"

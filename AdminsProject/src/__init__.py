@@ -8,10 +8,20 @@ from .utils import (
     errors,
 )
 
+from .gui_elements import (
+    TopLabel,
+    GrayLabel,
+    InterfaceLabel,
+    InputField,
+    EnterButton,
+    LinkButton,
+)
 from .welcome_page import WelcomePage
 from .sign_in_page import SignInPage
 from .profile_page import ProfilePage
 from .password_recovery_page import PasswordRecoveryPage
+from .password_recovery_verify_page import PasswordRecoveryVerifyPage
+from .password_recovery_change_pass_page import ChangePasswordPage
 
 __all__ = [
     'ft',
@@ -19,9 +29,17 @@ __all__ = [
     'send_login_request',
     'SCREEN_SIZE',
     'errors',
+    'TopLabel',
+    'GrayLabel',
+    'InterfaceLabel',
+    'InputField',
+    'EnterButton',
+    'LinkButton',
     'WelcomePage',
     'SignInPage',
     'ProfilePage',
     'PasswordRecoveryPage',
+    'PasswordRecoveryVerifyPage',
+    'ChangePasswordPage',
     'Optional',
 ]
