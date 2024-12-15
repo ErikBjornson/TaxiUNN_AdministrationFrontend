@@ -4,6 +4,9 @@ from typing import Optional
 from .utils import (
     dp,
     send_login_request,
+    send_verification_code,
+    do_verification,
+    change_password,
     SCREEN_SIZE,
     errors,
 )
@@ -27,6 +30,9 @@ __all__ = [
     'ft',
     'dp',
     'send_login_request',
+    'send_verification_code',
+    'do_verification',
+    'change_password',
     'SCREEN_SIZE',
     'errors',
     'TopLabel',
