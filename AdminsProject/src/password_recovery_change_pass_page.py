@@ -1,6 +1,8 @@
 from . import (
     ft,
+    Optional,
     dp,
+    change_password,
     SCREEN_SIZE,
     TopLabel,
     GrayLabel,
@@ -48,16 +50,8 @@ class ChangePasswordPage:
         """Метод проверки, что два введённых пароля верны."""
         return self.first.get_value() == self.second.get_value()
 
-    def clear_fields(self) -> None:
-        """Метод очистки полей ввода и надписей."""
-        self.first.clear()
-        self.second.clear()
-        self.error_label.clear()
-
-        self.page.update()
-
-    def to_login_page(self, action) -> None:
-        """Метод возвращения на страницу авторизации после смены пароля."""
+    async def on_change_password(self, action) -> None:
+        """Метод обработки заполнения полей создания и подтверждения пароля."""
         first = self.first.get_value()
         second = self.second.get_value()
 
@@ -73,7 +67,34 @@ class ChangePasswordPage:
             self.error_label.display_error("to_short_passwords")
             return
 
-        self.clear_fields()
+        await self.process_change(new_password=first)
+
+    async def process_change(self, new_password) -> Optional[Exception]:
+        """Метод отправки запроса о смене пароля на сервер."""
+        try:
+            response = await change_password(
+                email=self.page.session.get("user_email"),
+                new_password=new_password,
+            )
+            if response.get("message"):
+                self.page.session.remove("user_email")
+                self.clear_fields()
+                await self.to_login(action=None)
+            else:
+                message = response[list(response.keys())[0]][0]
+                self.error_label.display_error(message)
+        except Exception as ex:
+            return ex
+
+    def clear_fields(self) -> None:
+        """Метод очистки полей ввода и надписей."""
+        self.first.clear()
+        self.second.clear()
+        self.error_label.clear()
+        self.page.update()
+
+    async def to_login(self, action) -> None:
+        """Метод возвращения на страницу авторизации после смены пароля."""
         self.page.go("/login")
 
     def display(self, action) -> tuple[list[ft.Control], str]:
@@ -103,7 +124,7 @@ class ChangePasswordPage:
                             EnterButton(
                                 text="Сохранить пароль",
                                 top=770,
-                                click=self.to_login_page,
+                                click=self.on_change_password,
                             ),
                         ],
                         width=SCREEN_SIZE[0],

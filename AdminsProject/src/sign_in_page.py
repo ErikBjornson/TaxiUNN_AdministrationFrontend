@@ -46,8 +46,9 @@ class SignInPage:
 
         if not email or not password:
             self.error_label.display_error("empty_fields")
+            return
 
-        await self.process_login(email, password)
+        await self.process_login(email=email, password=password)
 
     async def process_login(self, email, password) -> Optional[Exception]:
         """Метод, сохраняющий токен пользователя в сессии страницы."""
@@ -60,10 +61,7 @@ class SignInPage:
                     self.page.session.set("access_token", access_token)
                     self.clear_fields()
 
-                    await self.on_success(
-                        action=None,
-                    )
-
+                    await self.to_profile(action=None)
                 else:
                     raise ValueError("Invalid access token!")
 
@@ -78,10 +76,9 @@ class SignInPage:
         self.email_field.clear()
         self.password_field.clear()
         self.error_label.clear()
-
         self.page.update()
 
-    async def on_success(self, action) -> None:
+    async def to_profile(self, action) -> None:
         """Переход на экран профиля - авторизация прошла успешно."""
         await self.page.go("/profile")
 

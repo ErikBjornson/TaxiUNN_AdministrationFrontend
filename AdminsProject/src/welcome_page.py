@@ -61,10 +61,10 @@ class WelcomePage:
             bgcolor="#4862E5",
             color="#FFFFFF",
             visible=True,
-            on_click=self.on_switch_to_sign_in,
+            on_click=self.to_sign_in,
         )
 
-    def on_switch_to_sign_in(self, action) -> None:
+    def to_sign_in(self, action) -> None:
         """Переход на экран авторизации - уход с приветственной страницы."""
         self.page.go("/login")
 

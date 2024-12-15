@@ -1,6 +1,9 @@
 from . import (
     ft,
+    Optional,
     dp,
+    send_verification_code,
+    do_verification,
     SCREEN_SIZE,
     TopLabel,
     GrayLabel,
@@ -104,12 +107,6 @@ class PasswordRecoveryVerifyPage:
         self.page = page
         self.page.bgcolor = "#FFFFFF"
 
-        self.gray_label = GrayLabel(
-            value="Код подтверждения отправлен\nна почту *****@gmail.com",
-            sizes=[400, 70, 400, 24],
-            top=334,
-        )
-
         self.verification_code_input = VerificationCodeInput()
 
         self.error_label = InterfaceLabel(
@@ -119,33 +116,55 @@ class PasswordRecoveryVerifyPage:
             color="#F44336",
         )
 
-    def validate_code(self) -> bool:
-        """Метод сравнивает введённый код с кодом, отправленный сервером."""
-        return True
-
-    def send_new_code(self, action) -> None:
-        """Метод отправки другого кода верификации."""
-
-    def clear_fields(self) -> None:
-        """Метод очистки полей ввода и надписей."""
-        self.verification_code_input.clear_sections()
-        self.error_label.clear()
-
-        self.page.update()
-
-    def to_change_password_page(self, action) -> None:
-        """Метод перехода на страницу смены пароля администратора."""
+    async def on_enter_code(self, action) -> None:
+        """Метод обработки ввода кода верификации."""
         code = self.verification_code_input.get_code()
 
         if not code or len(code) < 5:
             self.error_label.display_error("empty_fields")
             return
 
-        self.clear_fields()
+        await self.process_verify(verification_code=code)
+
+    async def process_verify(self, verification_code) -> Optional[Exception]:
+        """Метод отправки запроса для перехода к смене пароля на сервер."""
+        try:
+            response = await do_verification(
+                email=self.page.session.get("user_email"),
+                verification_code=verification_code,
+            )
+            if response.get("message"):
+                self.clear_fields()
+                await self.to_change_password(action=None)
+            else:
+                message = response[list(response.keys())[0]][0]
+                self.error_label.display_error(message)
+        except Exception as ex:
+            return ex
+
+    async def send_new_code(self, action) -> None:
+        """Метод отправки другого кода верификации."""
+        self.error_label.display_system_message(
+            "Новый код отправлен на вашу почту",
+        )
+        await send_verification_code(
+            email=self.page.session.get("user_email"),
+        )
+
+    def clear_fields(self) -> None:
+        """Метод очистки полей ввода и надписей."""
+        self.verification_code_input.clear_sections()
+        self.error_label.clear()
+        self.page.update()
+
+    async def to_change_password(self, action) -> None:
+        """Метод перехода на страницу смены пароля администратора."""
         self.page.go("/password-recovery/change")
 
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
+        email = f"на почту {self.page.session.get('user_email')}"
+
         self.page.clean()
         self.page.add(
             ft.Column(
@@ -156,13 +175,18 @@ class PasswordRecoveryVerifyPage:
                                 value="Введите\nпятизначный код",
                                 top=194,
                             ),
-                            self.gray_label,
+                            GrayLabel(
+                                value=f"Код подтверждения отправлен\n{email}",
+                                sizes=[800, 70, 400, 24],
+                                top=334,
+                                left=560,
+                            ),
                             self.verification_code_input,
                             self.error_label,
                             EnterButton(
                                 text="Продолжить",
                                 top=683,
-                                click=self.to_change_password_page,
+                                click=self.on_enter_code,
                             ),
                             GrayLabel(
                                 value="Код не пришёл?",

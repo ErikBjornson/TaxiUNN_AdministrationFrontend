@@ -1,6 +1,8 @@
 from . import (
     ft,
+    Optional,
     dp,
+    send_verification_code,
     SCREEN_SIZE,
     TopLabel,
     InterfaceLabel,
@@ -30,20 +32,39 @@ class PasswordRecoveryPage:
             color="#F44336",
         )
 
+    async def on_enter_email(self, action) -> None:
+        """Метод обработки заполнения поля ввода email."""
+        email = self.email_field.get_value()
+
+        if not email:
+            self.error_label.display_error("empty_fields")
+            return
+
+        await self.process_send_code(email=email)
+
+    async def process_send_code(self, email: str) -> Optional[Exception]:
+        """Метод отправления запроса для получения кода на сервер."""
+        try:
+            response = await send_verification_code(email=email)
+
+            if response.get("message"):
+                self.page.session.set("user_email", email)
+                self.clear_fields()
+                await self.to_verify(action=None)
+            else:
+                message = response[list(response.keys())[0]][0]
+                self.error_label.display_error(message)
+        except Exception as ex:
+            return ex
+
     def clear_fields(self) -> None:
         """Метод очистки полей ввода и надписей."""
         self.email_field.clear()
         self.error_label.clear()
-
         self.page.update()
 
-    def to_verify_page(self, action) -> None:
+    async def to_verify(self, action) -> None:
         """Метод для перехода на страницу для ввода кода верификации."""
-        if not self.email_field.get_value():
-            self.error_label.display_error("empty_fields")
-            return
-
-        self.clear_fields()
         self.page.go("/password-recovery/verify")
 
     def display(self, action) -> tuple[list[ft.Control], str]:
@@ -67,7 +88,7 @@ class PasswordRecoveryPage:
                             EnterButton(
                                 text="Отправить код",
                                 top=670,
-                                click=self.to_verify_page,
+                                click=self.on_enter_email,
                             ),
                         ],
                         width=SCREEN_SIZE[0],

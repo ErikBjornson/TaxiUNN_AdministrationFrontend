@@ -74,7 +74,14 @@ class InterfaceLabel(BaseLabel):
 
     def display_error(self, message: str) -> None:
         """Метод для отображения ошибок ввода данных."""
+        self.color = "#F44336"
         self.value = errors[message]
+        self.page.update()
+
+    def display_system_message(self, message: str) -> None:
+        """Метод для отображения системных сообщений."""
+        self.color = "#43A048"
+        self.value = message
         self.page.update()
 
     def clear(self) -> None:
