@@ -16,11 +16,7 @@
 
 ![Sign-in page overview](/images/signInPage.png)
 
-### Profile page
-
-![Profile page overview](/images/profilePage.png)
-
-### Password recovery page
+### Password recovery - email page
 
 ![Password recovery page overview](/images/passwordRecPage.png)
 
@@ -28,6 +24,14 @@
 
 ![Password recovery verify page overview](/images/passwordRecVerifyPage.png)
 
-### Password recovery - setting new password page
+### Password recovery - change password page
 
 ![Password recovery setting new password page overview](/images/passwordRecNewPassPage.png)
+
+### Profile page
+
+![Profile page overview](/images/profilePage.png)
+
+### Adding new admins page
+
+![Adding new admins page overview](/images/addingAdminsPage.png)

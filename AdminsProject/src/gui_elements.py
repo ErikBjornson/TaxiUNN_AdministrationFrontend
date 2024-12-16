@@ -22,8 +22,8 @@ class TopLabel(BaseLabel):
         self.value = value
         self.size = dp(50)
         self.top = dp(top) - dp(50) / 2
-        self.left = dp(750)
-        self.width = dp(429)
+        self.left = dp(665)
+        self.width = dp(600)
         self.height = dp(110) + dp(50) + dp(10)
         self.weight = dp(600)
         self.max_lines = 2
@@ -134,7 +134,6 @@ class BaseButton(ft.ElevatedButton):
         """Инициализация базового класса."""
         super().__init__()
         self.height = dp(80)
-        self.left = dp(750)
         self.style = ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=dp(18)),
             padding=ft.Padding(
@@ -142,6 +141,10 @@ class BaseButton(ft.ElevatedButton):
                 right=dp(60),
                 top=dp(20),
                 bottom=dp(20),
+            ),
+            side=ft.BorderSide(
+                width=dp(3),
+                color="#4862E5",
             ),
         )
         self.bgcolor = "#4862E5"
@@ -151,13 +154,27 @@ class BaseButton(ft.ElevatedButton):
 class EnterButton(BaseButton):
     """Кнопка ввода данных (и перехода на следующую страницу)."""
 
-    def __init__(self, text: str, top: int, click, width: int = 420) -> None:
+    def __init__(
+        self,
+        text: str,
+        top: int,
+        click,
+        left: int = 750,
+        width: int = 420,
+    ) -> None:
         """Инициализация кнопки."""
         super().__init__()
         self.text = text
         self.width = dp(width)
         self.top = dp(top)
+        self.left = dp(left)
         self.on_click = click
+
+    def fset_color(self, bgcolor: str, text_color: str):
+        """Метод стилизации кнопки."""
+        self.bgcolor = bgcolor
+        self.color = text_color
+        return self
 
 
 class LinkButton(ft.TextButton):
@@ -186,5 +203,36 @@ class LinkButton(ft.TextButton):
         self.left = left
         self.style = ft.ButtonStyle(
             color="#4862E5",
+        )
+        self.on_click = click
+
+
+class GoBackButton(ft.ElevatedButton):
+    """Класс кнопки возвращения на предыдущую страницу."""
+
+    def __init__(self, text: str, click) -> None:
+        """Инициализация класса кнопки."""
+        super().__init__()
+        self.color = "#000000"
+        self.bgcolor = "#FFFFFF"
+        self.width = dp(230)
+        self.height = dp(60)
+        self.top = dp(80)
+        self.left = dp(160)
+        self.elevation = 0
+        self.content = ft.Row(
+            controls=[
+                ft.Icon(
+                    name=ft.icons.CHEVRON_LEFT,
+                    size=dp(40),
+                ),
+                ft.Text(
+                    value=text,
+                    size=dp(25),
+                    font_family="Inter",
+                    text_align=ft.TextAlign.LEFT,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
         )
         self.on_click = click
