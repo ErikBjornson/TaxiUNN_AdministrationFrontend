@@ -1,76 +1,88 @@
 from . import ft, dp, errors
 
 
-class BaseLabel(ft.Text):
-    """Базовый класс надписей."""
-
-    def __init__(self) -> None:
-        """Инициализация класса."""
-        super().__init__()
-        self.size = dp(24)
-        self.font_family = "Inter"
-        self.text_align = ft.TextAlign.CENTER
-        self.color = "#1C1C1C"
-
-
-class TopLabel(BaseLabel):
-    """Класс заголовочной надписи страницы."""
-
-    def __init__(self, value: str, top: int) -> None:
-        """Инициализация класса надписи."""
-        super().__init__()
-        self.value = value
-        self.size = dp(50)
-        self.top = dp(top) - dp(50) / 2
-        self.left = dp(665)
-        self.width = dp(600)
-        self.height = dp(110) + dp(50) + dp(10)
-        self.weight = dp(600)
-        self.max_lines = 2
-
-
-class GrayLabel(BaseLabel):
-    """Класс надписи-подсказки серого цвета."""
+class HugeLabel(ft.Text):
+    """Класс крупной надписи интерфейса."""
 
     def __init__(
         self,
-        value: str,
-        sizes: list[int],
+        text: str,
         top: int,
-        left: int = 760,
+        left: int = 665,
+        align: ft.TextAlign = ft.TextAlign.CENTER,
+        max_lines: int = 2,
     ) -> None:
-        """Инициализация класса надписи."""
-        super().__init__()
-        self.value = value
-        self.max_lines = 2
-        self.width = dp(sizes[0])
-        self.height = dp(sizes[1])
-        self.weight = dp(sizes[2])
-        self.top = dp(top) - dp(24) / 2
-        self.left = dp(left)
+        """Инициализация крупной надписи интерфейса."""
+        super().__init__(
+            value=text,
+            top=dp(top) - dp(50) / 2,
+            left=dp(left),
+            width=dp(600),
+            height=dp(110) + dp(50) + dp(10),
+            weight=dp(600),
+            text_align=align,
+            max_lines=max_lines,
+        )
+        self.style = ft.TextStyle(
+            font_family="Inter",
+            size=dp(50),
+        )
+        self.color = "#000000"
+
+
+class GrayLabel(ft.Text):
+    """Класс серой надписи (надписи-подсказки) интерфейса."""
+
+    def __init__(
+        self,
+        text: str,
+        top: int,
+        left: int = 560,
+        size: int = 24,
+        align: ft.TextAlign = ft.TextAlign.CENTER,
+        width: int = 800,
+        height: int = 70,
+        weight: int = 500,
+        max_lines: int = 2,
+    ) -> None:
+        """Инициализация класса серой надписи."""
+        super().__init__(
+            value=text,
+            top=dp(top),
+            left=dp(left),
+            width=dp(width),
+            height=dp(height) + dp(size) + dp(10),
+            weight=dp(weight),
+            text_align=align,
+            max_lines=max_lines,
+        )
+        self.style = ft.TextStyle(
+            font_family="Inter",
+            size=dp(size),
+        )
         self.color = "#A0A0A0"
-        self.size = dp(sizes[3])
 
 
-class InterfaceLabel(BaseLabel):
-    """Вспомогательный класс - отображает надписи при валидации и вводе."""
+class MessageLabel(ft.Text):
+    """Класс надписи-сообщения (отображает ошибки или успешное действие)."""
 
     def __init__(
         self,
-        value: str,
         top: int,
-        align: ft.TextAlign = ft.TextAlign.LEFT,
-        color: str = "#1C1C1C",
     ) -> None:
-        """Инициализация вспомогательного класса."""
-        super().__init__()
-        self.value = value
-        self.text_align = align
-        self.top = dp(top)
-        self.left = dp(566) + dp(28)
-        self.width = dp(732)
-        self.height = dp(32)
-        self.color = color
+        """Инициализация класса надписи-сообщения."""
+        super().__init__(
+            top=dp(top),
+            left=dp(566) + dp(28),
+            width=dp(732),
+            height=dp(32),
+            text_align=ft.TextAlign.CENTER,
+        )
+        self.value = " "
+        self.style = ft.TextStyle(
+            font_family="Inter",
+            size=dp(24),
+        )
 
     def display_error(self, message: str) -> None:
         """Метод для отображения ошибок ввода данных."""
@@ -78,7 +90,7 @@ class InterfaceLabel(BaseLabel):
         self.value = errors[message]
         self.page.update()
 
-    def display_system_message(self, message: str) -> None:
+    def display_success(self, message: str) -> None:
         """Метод для отображения системных сообщений."""
         self.color = "#43A048"
         self.value = message
@@ -90,51 +102,100 @@ class InterfaceLabel(BaseLabel):
 
 
 class InputField(ft.Container):
-    """Вспомогательный класс - отображает поле ввода данных пользователя."""
+    """Класс поля ввода данных пользователя."""
 
-    def __init__(self, hint_text: str, is_password: bool, top: float) -> None:
-        """Инициализация вспомогательного класса."""
-        super().__init__()
-        self.content = ft.TextField(
-            width=dp(732),
-            height=dp(80),
-            border_radius=dp(16),
-            content_padding=dp(16),
-            bgcolor="#E8E8E8",
-            color="#000000",
-            hint_style=ft.TextStyle(
-                size=dp(26),
-                font_family="Inter",
-                color="#6C6C6C",
-            ),
-            hint_text=hint_text,
-            multiline=False,
-            password=is_password,
-            can_reveal_password=is_password,
-            border_width=0,
+    def __init__(
+        self,
+        top: int,
+        left: int | None = 600,
+        text: str = " ",
+        size: int = 26,
+        width: int = 732,
+        entry_height: int = 80,
+        hint_text: str = "Pochta@gmail.com",
+        is_password: bool = False,
+    ) -> None:
+        """Инициализация класса поля данных пользователя."""
+        super().__init__(
+            top=dp(top),
+            left=dp(left),
+            width=dp(width),
+            height=dp(30) + dp(entry_height),
         )
-        self.top = top
-        self.left = dp(566) + dp(28)
-        self.width = dp(732)
-        self.height = dp(80)
+        self.content = ft.Column(
+            controls=[
+                ft.Text(
+                    value=text,
+                    width=dp(width),
+                    height=dp(30),
+                    style=ft.TextStyle(
+                        font_family="Inter",
+                        size=dp(22),
+                    ),
+                    color="#1C1C1C",
+                ),
+                ft.TextField(
+                    width=dp(width),
+                    height=dp(entry_height),
+                    border_radius=dp(16),
+                    content_padding=dp(16),
+                    bgcolor="#E8E8E8",
+                    color="#000000",
+                    hint_style=ft.TextStyle(
+                        size=dp(size),
+                        font_family="Inter",
+                        color="#6C6C6C",
+                    ),
+                    hint_text=hint_text,
+                    multiline=False,
+                    password=is_password,
+                    can_reveal_password=is_password,
+                    border_width=0,
+                ),
+            ],
+        )
 
     def get_value(self) -> str:
         """Метод get для введённого значения."""
-        return self.content.value
+        return self.content.controls[1].value
 
     def clear(self) -> None:
         """Метод очистки поля ввода."""
-        self.content.value = ""
+        self.content.controls[1].value = ""
 
 
-class BaseButton(ft.ElevatedButton):
-    """Базовый класс кнопки интерфейса."""
+class InterfaceButton(ft.ElevatedButton):
+    """Класс кнопки интерфейса."""
 
-    def __init__(self) -> None:
-        """Инициализация базового класса."""
-        super().__init__()
-        self.height = dp(80)
+    def __init__(
+        self,
+        text: str,
+        click,
+        top: int = 750,
+        left: int = 750,
+        width: int = 420,
+        height: int = 80,
+        text_size: int = 24,
+        text_color: str = "#FFFFFF",
+        bgcolor: str = "#4862E5",
+        border_color: str = "#4862E5",
+    ) -> None:
+        """Инициализация класса кнопки интерфейса."""
+        super().__init__(
+            text=text,
+            width=dp(width),
+            height=dp(height),
+            top=dp(top),
+            left=dp(left),
+            color=text_color,
+            bgcolor=bgcolor,
+            on_click=click,
+        )
         self.style = ft.ButtonStyle(
+            text_style=ft.TextStyle(
+                font_family="Inter",
+                size=dp(text_size),
+            ),
             shape=ft.RoundedRectangleBorder(radius=dp(18)),
             padding=ft.Padding(
                 left=dp(60),
@@ -144,82 +205,51 @@ class BaseButton(ft.ElevatedButton):
             ),
             side=ft.BorderSide(
                 width=dp(3),
-                color="#4862E5",
+                color=border_color,
             ),
         )
-        self.bgcolor = "#4862E5"
-        self.color = "#FFFFFF"
-
-
-class EnterButton(BaseButton):
-    """Кнопка ввода данных (и перехода на следующую страницу)."""
-
-    def __init__(
-        self,
-        text: str,
-        top: int,
-        click,
-        left: int = 750,
-        width: int = 420,
-    ) -> None:
-        """Инициализация кнопки."""
-        super().__init__()
-        self.text = text
-        self.width = dp(width)
-        self.top = dp(top)
-        self.left = dp(left)
-        self.on_click = click
-
-    def fset_color(self, bgcolor: str, text_color: str):
-        """Метод стилизации кнопки."""
-        self.bgcolor = bgcolor
-        self.color = text_color
-        return self
 
 
 class LinkButton(ft.TextButton):
-    """Класс ссылочной кнопки (с текстом синего цвета, похожа на ссылку)."""
+    """Класс кнопки-ссылки (с текстом синего цвета, похожа на ссылку)."""
 
     def __init__(
         self,
         text: str,
         top: float,
         left: float,
-        click,
+        click: callable,
         width: int = 200,
     ) -> None:
-        """Инициализация ссылочной кнопки."""
-        super().__init__()
-        self.text = text
-        self.style = ft.ButtonStyle(
-            text_style=ft.TextStyle(
-                size=dp(18),
-                font_family="Inter",
-            ),
+        """Инициализация класса кнопки-ссылки."""
+        super().__init__(
+            text=text,
+            top=top,
+            left=left,
+            width=dp(width),
+            height=dp(30),
+            on_click=click,
         )
-        self.width = dp(width)
-        self.height = dp(30)
-        self.top = top
-        self.left = left
         self.style = ft.ButtonStyle(
             color="#4862E5",
         )
-        self.on_click = click
 
 
 class GoBackButton(ft.ElevatedButton):
     """Класс кнопки возвращения на предыдущую страницу."""
 
-    def __init__(self, text: str, click) -> None:
+    def __init__(self, text: str, click: callable) -> None:
         """Инициализация класса кнопки."""
-        super().__init__()
-        self.color = "#000000"
-        self.bgcolor = "#FFFFFF"
-        self.width = dp(230)
-        self.height = dp(60)
-        self.top = dp(80)
-        self.left = dp(160)
-        self.elevation = 0
+        super().__init__(
+            top=dp(80),
+            left=dp(160),
+            width=dp(230),
+            height=dp(60),
+            elevation=0,
+            color="#000000",
+            bgcolor="#FFFFFF",
+            on_click=click,
+        )
         self.content = ft.Row(
             controls=[
                 ft.Icon(
@@ -235,4 +265,3 @@ class GoBackButton(ft.ElevatedButton):
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
-        self.on_click = click

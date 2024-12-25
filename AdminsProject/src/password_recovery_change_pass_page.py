@@ -1,14 +1,13 @@
 from . import (
     ft,
     Optional,
-    dp,
     change_password,
     SCREEN_SIZE,
-    TopLabel,
+    HugeLabel,
     GrayLabel,
-    InterfaceLabel,
+    MessageLabel,
     InputField,
-    EnterButton,
+    InterfaceButton,
 )
 
 
@@ -21,30 +20,27 @@ class ChangePasswordPage:
         self.page.bgcolor = "#FFFFFF"
 
         self.gray_label = GrayLabel(
-            value="Пароль должен содержать\nне менее 8 знаков",
-            sizes=[380, 62, 400, 24],
+            text="Пароль должен содержать\nне менее 8 знаков",
             top=290,
             left=770,
+            width=380,
         )
 
         self.first = InputField(
+            top=370,
+            text="Пароль",
             hint_text="Пароль",
             is_password=True,
-            top=dp(370) + dp(32) + dp(10),
         )
 
         self.second = InputField(
+            top=532,
+            text="Пароль",
             hint_text="Пароль",
             is_password=True,
-            top=dp(532) + dp(32) + dp(10),
         )
 
-        self.error_label = InterfaceLabel(
-            value=" ",
-            top=690,
-            align=ft.TextAlign.CENTER,
-            color="#F44336",
-        )
+        self.error_label = MessageLabel(top=690)
 
     def is_passwords_equals(self) -> bool:
         """Метод проверки, что два введённых пароля верны."""
@@ -105,23 +101,15 @@ class ChangePasswordPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            TopLabel(
-                                value="Установите\nновый пароль",
+                            HugeLabel(
+                                text="Установите\nновый пароль",
                                 top=144,
                             ),
                             self.gray_label,
-                            InterfaceLabel(
-                                value="Введите пароль",
-                                top=370,
-                            ),
                             self.first,
-                            InterfaceLabel(
-                                value="Подтвердите пароль",
-                                top=532,
-                            ),
                             self.second,
                             self.error_label,
-                            EnterButton(
+                            InterfaceButton(
                                 text="Сохранить пароль",
                                 top=770,
                                 click=self.on_change_password,

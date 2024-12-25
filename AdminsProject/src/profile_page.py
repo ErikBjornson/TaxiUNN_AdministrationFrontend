@@ -137,6 +137,7 @@ class ProfilePage:
             path="../assets/tariffWorkImage.png",
             label="Работа с тарифами",
             left=812,
+            click=self.to_tariffs,
         )
 
         self.adding_drivers = Frame(
@@ -156,6 +157,10 @@ class ProfilePage:
         """Метод logout - выход из аккунта и возврат к странице авторизации."""
         self.page.session.remove("access_token")
         self.page.go("/login")
+
+    def to_tariffs(self, action) -> None:
+        """Метод перехода на страницу добавления тарифов."""
+        self.page.go("/profile/tariffs")
 
     def to_add_admins(self, action) -> None:
         """Метод перехода на страницу добавления новых администраторов."""

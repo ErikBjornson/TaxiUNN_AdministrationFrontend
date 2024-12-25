@@ -1,11 +1,10 @@
 from . import (
     ft,
-    dp,
     SCREEN_SIZE,
-    TopLabel,
-    InterfaceLabel,
+    HugeLabel,
+    MessageLabel,
+    InterfaceButton,
     InputField,
-    EnterButton,
     GoBackButton,
 )
 
@@ -19,21 +18,18 @@ class AddAdminsPage:
         self.page.bgcolor = "#FFFFFF"
 
         self.full_name_field = InputField(
+            top=317,
+            text="Имя Фамилия",
             hint_text="Иван Иванов",
             is_password=False,
-            top=dp(317) + dp(32) + dp(10),
         )
         self.email_field = InputField(
+            top=500,
+            text="Почта",
             hint_text="Pochta@gmail.com",
             is_password=False,
-            top=dp(500) + dp(32) + dp(10),
         )
-        self.error_label = InterfaceLabel(
-            value=" ",
-            top=670,
-            align=ft.TextAlign.CENTER,
-            color="#F44336",
-        )
+        self.error_label = MessageLabel(top=670)
 
     def clear_fields(self, action) -> None:
         """Метод очистки полей ввода и надписей."""
@@ -68,40 +64,28 @@ class AddAdminsPage:
                                 text="Меню",
                                 click=self.to_profile,
                             ),
-                            TopLabel(
-                                value="Добавление нового\nадминистратора",
+                            HugeLabel(
+                                text="Добавление нового\nадминистратора",
                                 top=144,
                             ),
-                            InterfaceLabel(
-                                value="Имя Фамилия",
-                                top=317,
-                            ),
                             self.full_name_field,
-                            InterfaceLabel(
-                                value="Почта",
-                                top=500,
-                            ),
                             self.email_field,
                             self.error_label,
-                            EnterButton(
+                            InterfaceButton(
                                 text="Добавить",
                                 top=750,
                                 click=self.add_admin,
                                 left=677,
                                 width=265,
-                            ).fset_color(
-                                bgcolor="#4862E5",
-                                text_color="#FFFFFF",
                             ),
-                            EnterButton(
+                            InterfaceButton(
                                 text="Очистить",
                                 top=750,
                                 click=self.clear_fields,
                                 left=970,
                                 width=265,
-                            ).fset_color(
-                                bgcolor="#FFFFFF",
                                 text_color="#1C1C1C",
+                                bgcolor="#FFFFFF",
                             ),
                         ],
                         width=SCREEN_SIZE[0],

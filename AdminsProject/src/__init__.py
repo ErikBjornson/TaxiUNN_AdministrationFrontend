@@ -12,17 +12,18 @@ from .utils import (
 )
 
 from .gui_elements import (
-    TopLabel,
+    HugeLabel,
     GrayLabel,
-    InterfaceLabel,
+    MessageLabel,
     InputField,
-    EnterButton,
+    InterfaceButton,
     LinkButton,
     GoBackButton,
 )
 from .welcome_page import WelcomePage
 from .sign_in_page import SignInPage
 from .profile_page import ProfilePage
+from .tariffs_page import TariffsPage
 from .adding_admins_page import AddAdminsPage
 from .password_recovery_page import PasswordRecoveryPage
 from .password_recovery_verify_page import PasswordRecoveryVerifyPage
@@ -39,17 +40,18 @@ __all__ = [
     'do_verification',
     'change_password',
 
-    'TopLabel',
+    'HugeLabel',
     'GrayLabel',
-    'InterfaceLabel',
+    'MessageLabel',
     'InputField',
-    'EnterButton',
+    'InterfaceButton',
     'LinkButton',
     'GoBackButton',
 
     'WelcomePage',
     'SignInPage',
     'ProfilePage',
+    'TariffsPage',
     'AddAdminsPage',
     'PasswordRecoveryPage',
     'PasswordRecoveryVerifyPage',
