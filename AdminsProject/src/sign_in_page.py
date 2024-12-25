@@ -1,15 +1,15 @@
 from . import (
     ft,
     Optional,
-    dp,
-    send_login_request,
-    SCREEN_SIZE,
+)
+from .gui_elements import (
     HugeLabel,
     MessageLabel,
     InputField,
     LinkButton,
     InterfaceButton,
 )
+from .utils import dp, send_login_request, SCREEN_SIZE
 
 
 class SignInPage:

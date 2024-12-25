@@ -1,4 +1,5 @@
-from . import ft, dp, errors
+from . import ft
+from .utils import dp, errors
 
 
 class HugeLabel(ft.Text):
@@ -101,6 +102,77 @@ class MessageLabel(ft.Text):
         self.value = ""
 
 
+class InterfaceLabel(ft.Text):
+    """Класс простой надписи."""
+
+    def __init__(
+        self,
+        text: str,
+        size: int,
+        width: int,
+        height: int,
+        color: str = "#1C1C1C",
+        align: ft.TextAlign = ft.TextAlign.LEFT,
+    ) -> None:
+        """Инициализация класса простой надписи."""
+        super().__init__(
+            value=text,
+            font_family="Inter",
+            size=dp(size),
+            color=color,
+            width=dp(width),
+            height=dp(height),
+            text_align=align,
+        )
+
+
+class InterfaceField(ft.TextField):
+    """Класс простого поля ввода."""
+
+    def __init__(
+        self,
+        size: int = 26,
+        width: int = 732,
+        height: int = 80,
+        hint_text: str = "",
+        suffix: str = "",
+        is_password: bool = False,
+        field_id: str = "",
+    ) -> None:
+        """Инициализация класса простого поля ввода."""
+        super().__init__(
+            width=dp(width),
+            height=dp(height),
+            hint_text=hint_text,
+            suffix_text=suffix,
+            password=is_password,
+            can_reveal_password=is_password,
+            bgcolor="#E8E8E8",
+            color="#000000",
+            border_radius=dp(16),
+            content_padding=dp(16),
+            multiline=False,
+            border_width=0,
+        )
+        self.field_id = field_id
+        self.hint_style = ft.TextStyle(
+            font_family="Inter",
+            size=dp(size),
+            color="#6C6C6C",
+        )
+        self.suffix_style = ft.TextStyle(
+            font_family="Inter",
+            size=dp(size),
+            color="#1C1C1C",
+        )
+        self.on_change = self.readings
+
+    def readings(self, action) -> None:
+        """Метод для записи вводимых значений в сессию страницы."""
+        if self.field_id:
+            self.page.session.set(f"{self.field_id}", self.value)
+
+
 class InputField(ft.Container):
     """Класс поля ввода данных пользователя."""
 
@@ -115,7 +187,7 @@ class InputField(ft.Container):
         hint_text: str = "Pochta@gmail.com",
         is_password: bool = False,
     ) -> None:
-        """Инициализация класса поля данных пользователя."""
+        """Инициализация класса поля ввода данных пользователя."""
         super().__init__(
             top=dp(top),
             left=dp(left),
@@ -124,33 +196,18 @@ class InputField(ft.Container):
         )
         self.content = ft.Column(
             controls=[
-                ft.Text(
-                    value=text,
-                    width=dp(width),
-                    height=dp(30),
-                    style=ft.TextStyle(
-                        font_family="Inter",
-                        size=dp(22),
-                    ),
-                    color="#1C1C1C",
+                InterfaceLabel(
+                    text=text,
+                    size=22,
+                    width=width,
+                    height=30,
                 ),
-                ft.TextField(
-                    width=dp(width),
-                    height=dp(entry_height),
-                    border_radius=dp(16),
-                    content_padding=dp(16),
-                    bgcolor="#E8E8E8",
-                    color="#000000",
-                    hint_style=ft.TextStyle(
-                        size=dp(size),
-                        font_family="Inter",
-                        color="#6C6C6C",
-                    ),
+                InterfaceField(
+                    size=size,
+                    width=width,
+                    height=entry_height,
                     hint_text=hint_text,
-                    multiline=False,
-                    password=is_password,
-                    can_reveal_password=is_password,
-                    border_width=0,
+                    is_password=is_password,
                 ),
             ],
         )
@@ -171,8 +228,8 @@ class InterfaceButton(ft.ElevatedButton):
         self,
         text: str,
         click,
-        top: int = 750,
-        left: int = 750,
+        top: int | None = 750,
+        left: int | None = 750,
         width: int = 420,
         height: int = 80,
         text_size: int = 24,
@@ -197,12 +254,6 @@ class InterfaceButton(ft.ElevatedButton):
                 size=dp(text_size),
             ),
             shape=ft.RoundedRectangleBorder(radius=dp(18)),
-            padding=ft.Padding(
-                left=dp(60),
-                right=dp(60),
-                top=dp(20),
-                bottom=dp(20),
-            ),
             side=ft.BorderSide(
                 width=dp(3),
                 color=border_color,

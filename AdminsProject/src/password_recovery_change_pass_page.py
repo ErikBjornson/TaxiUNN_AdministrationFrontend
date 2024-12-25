@@ -1,14 +1,15 @@
 from . import (
     ft,
     Optional,
-    change_password,
-    SCREEN_SIZE,
+)
+from .gui_elements import (
     HugeLabel,
     GrayLabel,
     MessageLabel,
     InputField,
     InterfaceButton,
 )
+from .utils import change_password, SCREEN_SIZE
 
 
 class ChangePasswordPage:

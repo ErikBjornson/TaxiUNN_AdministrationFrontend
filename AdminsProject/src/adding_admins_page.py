@@ -1,12 +1,12 @@
-from . import (
-    ft,
-    SCREEN_SIZE,
+from . import ft
+from .gui_elements import (
     HugeLabel,
     MessageLabel,
     InterfaceButton,
     InputField,
     GoBackButton,
 )
+from .utils import SCREEN_SIZE
 
 
 class AddAdminsPage:

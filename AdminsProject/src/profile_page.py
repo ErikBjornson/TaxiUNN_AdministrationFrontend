@@ -1,9 +1,6 @@
-from . import (
-    ft,
-    dp,
-    SCREEN_SIZE,
-    GoBackButton,
-)
+from . import ft
+from .gui_elements import GoBackButton
+from .utils import dp, SCREEN_SIZE
 
 
 class ProfilePhoto(ft.Container):
@@ -144,6 +141,7 @@ class ProfilePage:
             path="../assets/addingDriversImage.png",
             label="Добавление\nводителей",
             left=1098,
+            click=self.to_add_drivers,
         )
 
         self.adding_admins = Frame(
@@ -161,6 +159,10 @@ class ProfilePage:
     def to_tariffs(self, action) -> None:
         """Метод перехода на страницу добавления тарифов."""
         self.page.go("/profile/tariffs")
+
+    def to_add_drivers(self, action) -> None:
+        """Мктод перехода на страницу добавления новых водителей."""
+        self.page.go("/profile/add-drivers")
 
     def to_add_admins(self, action) -> None:
         """Метод перехода на страницу добавления новых администраторов."""

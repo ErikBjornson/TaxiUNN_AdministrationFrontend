@@ -1,8 +1,8 @@
 import aiohttp
 
-SCREEN_SIZE = 1250, 720
-
 BASE_URL = "http://127.0.0.1:8000"
+
+SCREEN_SIZE = 1250, 720
 
 errors = {
     "Invalid credentials.":
@@ -27,14 +27,17 @@ errors = {
         "Пароль должен содержать не менее 8 символов",
 }
 
+
+def dp(value: int | None) -> float:
+    """Функция для масштабирования элементов GUI."""
+    if value is None:
+        return value
+    return value / 1.5
+
+
 hdrs = {
     "Content-Type": "application/json",
 }
-
-
-def dp(value: int) -> float:
-    """Функция для масштабирования элементов GUI."""
-    return value / 1.5
 
 
 async def send_login_request(email, password):
