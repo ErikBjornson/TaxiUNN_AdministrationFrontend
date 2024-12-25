@@ -4,6 +4,7 @@ from src import (
     SignInPage,
     ProfilePage,
     TariffsPage,
+    AddDriversPage,
     AddAdminsPage,
     PasswordRecoveryPage,
     PasswordRecoveryVerifyPage,
@@ -23,6 +24,7 @@ class Navigation:
             "/login": SignInPage(page),
             "/profile": ProfilePage(page),
             "/profile/tariffs": TariffsPage(page),
+            "/profile/add-drivers": AddDriversPage(page),
             "/profile/add-admins": AddAdminsPage(page),
             "/password-recovery": PasswordRecoveryPage(page),
             "/password-recovery/verify": PasswordRecoveryVerifyPage(page),
@@ -47,7 +49,7 @@ class Navigation:
 
 async def main(page: ft.Page):
     """Главная функция запуска приложения."""
-    Navigation(page)
+    AddDriversPage(page).display(action=None)
     page.update()
 
 
