@@ -4,11 +4,11 @@ from . import (
     dp,
     send_login_request,
     SCREEN_SIZE,
-    TopLabel,
-    InterfaceLabel,
+    HugeLabel,
+    MessageLabel,
     InputField,
     LinkButton,
-    EnterButton,
+    InterfaceButton,
 )
 
 
@@ -21,28 +21,23 @@ class SignInPage:
         self.page.bgcolor = "#FFFFFF"
 
         self.email_field = InputField(
-            hint_text="Pochta@gmail.com",
-            is_password=False,
-            top=dp(304) + dp(32) + dp(10),
+            top=304,
+            text="Почта",
         )
 
         self.password_field = InputField(
+            top=482,
+            text="Пароль",
             hint_text="Пароль",
             is_password=True,
-            top=dp(482) + dp(32) + dp(10),
         )
 
-        self.error_label = InterfaceLabel(
-            value=" ",
-            top=670,
-            align=ft.TextAlign.CENTER,
-            color="#F44336",
-        )
+        self.error_label = MessageLabel(top=670)
 
     async def on_login(self, action) -> None:
         """Метод валидации и проверки успешности входа."""
-        email = self.email_field.content.value
-        password = self.password_field.content.value
+        email = self.email_field.get_value()
+        password = self.password_field.get_value()
 
         if not email or not password:
             self.error_label.display_error("empty_fields")
@@ -95,19 +90,11 @@ class SignInPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            TopLabel(
-                                value="Вход в аккаунт\nадминистратора",
+                            HugeLabel(
+                                text="Вход в аккаунт\nадминистратора",
                                 top=144,
                             ),
-                            InterfaceLabel(
-                                value="Почта",
-                                top=304,
-                            ),
                             self.email_field,
-                            InterfaceLabel(
-                                value="Введите пароль",
-                                top=482,
-                            ),
                             self.password_field,
                             LinkButton(
                                 text="Забыли пароль?",
@@ -116,7 +103,7 @@ class SignInPage:
                                 click=self.to_recovery,
                             ),
                             self.error_label,
-                            EnterButton(
+                            InterfaceButton(
                                 text="Войти",
                                 top=750,
                                 click=self.on_login,

@@ -5,10 +5,10 @@ from . import (
     send_verification_code,
     do_verification,
     SCREEN_SIZE,
-    TopLabel,
+    HugeLabel,
     GrayLabel,
-    InterfaceLabel,
-    EnterButton,
+    MessageLabel,
+    InterfaceButton,
     LinkButton,
 )
 
@@ -109,12 +109,7 @@ class PasswordRecoveryVerifyPage:
 
         self.verification_code_input = VerificationCodeInput()
 
-        self.error_label = InterfaceLabel(
-            value=" ",
-            top=590,
-            align=ft.TextAlign.CENTER,
-            color="#F44336",
-        )
+        self.error_label = MessageLabel(top=590)
 
     async def on_enter_code(self, action) -> None:
         """Метод обработки ввода кода верификации."""
@@ -144,7 +139,7 @@ class PasswordRecoveryVerifyPage:
 
     async def send_new_code(self, action) -> None:
         """Метод отправки другого кода верификации."""
-        self.error_label.display_system_message(
+        self.error_label.display_success(
             "Новый код отправлен на вашу почту",
         )
         await send_verification_code(
@@ -171,28 +166,29 @@ class PasswordRecoveryVerifyPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            TopLabel(
-                                value="Введите\nпятизначный код",
+                            HugeLabel(
+                                text="Введите\nпятизначный код",
                                 top=194,
                             ),
                             GrayLabel(
-                                value=f"Код подтверждения отправлен\n{email}",
-                                sizes=[800, 70, 400, 24],
+                                text=f"Код подтверждения отправлен\n{email}",
                                 top=334,
-                                left=560,
                             ),
                             self.verification_code_input,
                             self.error_label,
-                            EnterButton(
+                            InterfaceButton(
                                 text="Продолжить",
                                 top=683,
                                 click=self.on_enter_code,
                             ),
                             GrayLabel(
-                                value="Код не пришёл?",
-                                sizes=[180, 30, 250, 21],
-                                top=790,
+                                text="Код не пришёл?",
+                                top=778,
                                 left=760,
+                                size=21,
+                                width=180,
+                                height=30,
+                                weight=250,
                             ),
                             LinkButton(
                                 text="Отправить заново",

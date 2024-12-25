@@ -1,13 +1,12 @@
 from . import (
     ft,
     Optional,
-    dp,
     send_verification_code,
     SCREEN_SIZE,
-    TopLabel,
-    InterfaceLabel,
+    HugeLabel,
+    MessageLabel,
     InputField,
-    EnterButton,
+    InterfaceButton,
 )
 
 
@@ -20,17 +19,11 @@ class PasswordRecoveryPage:
         self.page.bgcolor = "#FFFFFF"
 
         self.email_field = InputField(
-            hint_text="Pochta@gmail.com",
-            is_password=False,
-            top=dp(414) + dp(32) + dp(10),
+            top=414,
+            text="Почта",
         )
 
-        self.error_label = InterfaceLabel(
-            value=" ",
-            top=580,
-            align=ft.TextAlign.CENTER,
-            color="#F44336",
-        )
+        self.error_label = MessageLabel(top=580)
 
     async def on_enter_email(self, action) -> None:
         """Метод обработки заполнения поля ввода email."""
@@ -75,17 +68,13 @@ class PasswordRecoveryPage:
                 controls=[
                     ft.Stack(
                         controls=[
-                            TopLabel(
-                                value="Восстановление\nпароля",
+                            HugeLabel(
+                                text="Восстановление\nпароля",
                                 top=264,
-                            ),
-                            InterfaceLabel(
-                                value="Почта",
-                                top=414,
                             ),
                             self.email_field,
                             self.error_label,
-                            EnterButton(
+                            InterfaceButton(
                                 text="Отправить код",
                                 top=670,
                                 click=self.on_enter_email,
