@@ -1,4 +1,5 @@
-from . import ft, dp, SCREEN_SIZE
+from . import ft
+from .utils import dp, SCREEN_SIZE
 
 
 class WelcomePage:

@@ -1,15 +1,19 @@
 from . import (
     ft,
     Optional,
-    dp,
-    send_verification_code,
-    do_verification,
-    SCREEN_SIZE,
+)
+from .gui_elements import (
     HugeLabel,
     GrayLabel,
     MessageLabel,
     InterfaceButton,
     LinkButton,
+)
+from .utils import (
+    dp,
+    send_verification_code,
+    do_verification,
+    SCREEN_SIZE,
 )
 
 

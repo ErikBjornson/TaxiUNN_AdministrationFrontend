@@ -32,6 +32,10 @@
 
 ![Profile page overview](/images/profilePage.png)
 
+### Tariffs work page
+
+![Tariffs work page overview](/images/tariffsPage.png)
+
 ### Adding new admins page
 
 ![Adding new admins page overview](/images/addingAdminsPage.png)
