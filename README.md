@@ -36,6 +36,10 @@
 
 ![Tariffs work page overview](/images/tariffsPage.png)
 
+### Adding new drivers page
+
+![Adding new drivers page overview](/images/addingDriversPage.png)
+
 ### Adding new admins page
 
 ![Adding new admins page overview](/images/addingAdminsPage.png)
