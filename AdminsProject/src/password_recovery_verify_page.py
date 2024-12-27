@@ -29,7 +29,7 @@ class VerificationCodeInput(ft.Container):
                     controls=[
                         ft.TextField(
                             width=dp(70),
-                            height=dp(90),
+                            height=dp(100),
                             border_color="#4862E5",
                             border_radius=dp(10),
                             border_width=dp(3),
@@ -37,6 +37,10 @@ class VerificationCodeInput(ft.Container):
                             color="#000000",
                             multiline=False,
                             max_lines=1,
+                            max_length=1,
+                            counter_style=ft.TextStyle(
+                                color="#FFFFFF",
+                            ),
                             on_change=self.to_next,
                             on_focus=self.to_last_entered,
                             text_align=ft.TextAlign.CENTER,
@@ -88,6 +92,9 @@ class VerificationCodeInput(ft.Container):
 
     def to_next(self, action) -> None:
         """Метод перехода к следующей ячейке, если текущая уже заполнена."""
+        if not self.get_value_of_section(self.index):
+            self.to_previous(action=None)
+
         self.values += self.get_value_of_section(self.index)
 
         if self.index < 4:

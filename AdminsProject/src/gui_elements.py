@@ -227,7 +227,7 @@ class InterfaceButton(ft.ElevatedButton):
     def __init__(
         self,
         text: str,
-        click,
+        click: callable,
         top: int | None = 750,
         left: int | None = 750,
         width: int = 420,

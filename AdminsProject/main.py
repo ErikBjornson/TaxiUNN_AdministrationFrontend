@@ -49,7 +49,7 @@ class Navigation:
 
 async def main(page: ft.Page):
     """Главная функция запуска приложения."""
-    AddDriversPage(page).display(action=None)
+    Navigation(page)
     page.update()
 
 
