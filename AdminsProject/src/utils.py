@@ -14,8 +14,14 @@ errors = {
     "An account with this email does not exist.":
         "Пользователь с таким email не существует",
 
+    "An account with this email exist.":
+        "Пользователь с таким email уже существует",
+
     "The verification code is not active.":
         "Неверный код верификации.",
+
+    "User successfully registered.":
+        "Новый администратор успешно зарегистрирован",
 
     "empty_fields":
         "Все поля должны быть заполнены",
@@ -94,5 +100,21 @@ async def load_profile_data(access_token: str):
         "Authorization": f"Bearer {access_token}",
     }
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=url, headers=headers) as response:
+        async with session.get(url, headers=headers) as response:
+            return await response.json()
+
+
+async def register_new_admin(access_token: str, email: str, full_name: str):
+    """Функция регистрации нового администратора другим администратором."""
+    url = f"{BASE_URL}/admins/auth/register"
+    head = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+    payload = {
+        "email": email,
+        "full_name": full_name,
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload, headers=head) as response:
             return await response.json()

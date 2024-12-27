@@ -170,7 +170,7 @@ class ProfilePage:
                 if response.get('email'):
                     self.load_profile_info(response)
                 else:
-                    raise ValueError(('Значение токена невалидно.'))
+                    raise ValueError('Значение токена невалидно.')
 
         except Exception as ex:
             return ex

@@ -76,7 +76,7 @@ class MessageLabel(ft.Text):
             top=dp(top),
             left=dp(566) + dp(28),
             width=dp(732),
-            height=dp(32),
+            height=dp(40),
             text_align=ft.TextAlign.CENTER,
         )
         self.value = " "
