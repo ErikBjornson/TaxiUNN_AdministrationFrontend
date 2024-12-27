@@ -174,6 +174,7 @@ class TariffComponent(ft.Container):
 
     def delete(self, action) -> None:
         """Метод удаления тарифа из списка."""
+        tariffs_list.delete_component(self)
 
 
 class TariffsList(ft.Container):
@@ -201,6 +202,14 @@ class TariffsList(ft.Container):
         """Метод создания нового компонента и добавления его в список."""
         self.content.controls.append(TariffComponent())
 
+    def delete_component(self, component) -> None:
+        """Метод удаления компонента из списка."""
+        self.content.controls.remove(component)
+        self.page.update()
+
+
+tariffs_list = TariffsList()
+
 
 class TariffsPage:
     """Форма страницы работы с тарифами для водителей и клиентов."""
@@ -210,14 +219,12 @@ class TariffsPage:
         self.page = page
         self.page.bgcolor = "#FFFFFF"
 
-        self.tariffs_list = TariffsList()
-
     def clear_fields(self) -> None:
         """Метод очистки полей ввода и надписей."""
 
     def add_tariff(self, action) -> None:
         """Метод обработчик события нажатия на кнопку добавления тарифа."""
-        self.tariffs_list.create_component()
+        tariffs_list.create_component()
         self.page.update()
 
     def to_profile(self, action) -> None:
@@ -240,7 +247,7 @@ class TariffsPage:
                                 text="Работа с тарифами",
                                 top=110,
                             ),
-                            self.tariffs_list,
+                            tariffs_list,
                             InterfaceButton(
                                 text="Добавить тариф",
                                 top=780,
