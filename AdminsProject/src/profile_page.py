@@ -1,6 +1,7 @@
-from . import ft
+from . import ft, Optional
 from .gui_elements import GoBackButton
-from .utils import dp, SCREEN_SIZE
+from .utils import dp, load_profile_data, SCREEN_SIZE
+import asyncio
 
 
 class ProfilePhoto(ft.Container):
@@ -29,14 +30,14 @@ class ProfilePhoto(ft.Container):
 class ProfileInfo(ft.Container):
     """Класс, создающий поле 'Имя Фамилия' и поле с почтой."""
 
-    def __init__(self, name: str, login: str) -> None:
+    def __init__(self) -> None:
         """Инициализация группы."""
         super().__init__()
 
         self.content = ft.Column(
             controls=[
                 ft.Text(
-                    value=f"{name}",
+                    value=" ",
                     size=dp(40),
                     font_family="Inter",
                     text_align=ft.TextAlign.CENTER,
@@ -48,7 +49,7 @@ class ProfileInfo(ft.Container):
                     visible=True,
                 ),
                 ft.Text(
-                    value=f"{login}",
+                    value=" ",
                     size=dp(24),
                     font_family="Inter",
                     text_align=ft.TextAlign.CENTER,
@@ -65,6 +66,12 @@ class ProfileInfo(ft.Container):
         self.left = dp(737)
         self.width = dp(400)
         self.height = dp(90)
+
+    def update_profile_info(self, name: str, login: str) -> None:
+        """Заполнение данных профиля."""
+        self.content.controls[0].value = name
+        self.content.controls[1].value = login
+        self.page.update()
 
 
 class Frame(ft.Container):
@@ -150,6 +157,30 @@ class ProfilePage:
             left=1384,
             click=self.to_add_admins,
         )
+        self.profile_info = ProfileInfo()
+
+    async def load_user_data(self) -> Optional[Exception]:
+        """Получения данных пользователя с сервера."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await load_profile_data(token)
+
+                if response.get('email'):
+                    self.load_profile_info(response)
+                else:
+                    raise ValueError(('Значение токена невалидно.'))
+
+        except Exception as ex:
+            return ex
+
+    def load_profile_info(self, data):
+        """Обновление надписей данных профиля."""
+        self.profile_info.update_profile_info(
+            name=data.get('full_name'),
+            login=data.get('email'),
+        )
 
     def to_login(self, action) -> None:
         """Метод logout - выход из аккунта и возврат к странице авторизации."""
@@ -171,6 +202,7 @@ class ProfilePage:
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
+        asyncio.create_task(self.load_user_data())  # загрузка данных профиля
         self.page.add(
             ft.Stack(
                 controls=[
@@ -179,10 +211,7 @@ class ProfilePage:
                         click=self.to_login,
                     ),
                     ProfilePhoto(),
-                    ProfileInfo(
-                        name="Lion Alex",
-                        login="test@gmail.com",
-                    ),
+                    self.profile_info,
                     self.clients_work,
                     self.income_work,
                     self.tariffs_work,
