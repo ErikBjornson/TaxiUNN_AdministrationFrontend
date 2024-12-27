@@ -1,4 +1,4 @@
-from . import ft
+from . import ft, Optional
 from .gui_elements import (
     HugeLabel,
     MessageLabel,
@@ -6,7 +6,7 @@ from .gui_elements import (
     InputField,
     GoBackButton,
 )
-from .utils import SCREEN_SIZE
+from .utils import register_new_admin, SCREEN_SIZE
 
 
 class AddAdminsPage:
@@ -31,14 +31,7 @@ class AddAdminsPage:
         )
         self.error_label = MessageLabel(top=670)
 
-    def clear_fields(self, action) -> None:
-        """Метод очистки полей ввода и надписей."""
-        self.full_name_field.clear()
-        self.email_field.clear()
-        self.error_label.clear()
-        self.page.update()
-
-    def add_admin(self, action) -> None:
+    async def add_admin(self, action) -> None:
         """Метод обработки события нажатия на кнопку 'Добавить'."""
         full_name = self.full_name_field.get_value()
         email = self.email_field.get_value()
@@ -46,6 +39,45 @@ class AddAdminsPage:
         if not full_name or not email:
             self.error_label.display_error("empty_fields")
             return
+
+        await self.process_create_admin(email=email, full_name=full_name)
+
+    async def process_create_admin(
+        self,
+        email: str,
+        full_name: str,
+    ) -> Optional[Exception]:
+        """Метод отправки запроса о регистрации администратора на сервер."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await register_new_admin(
+                    access_token=token,
+                    email=email,
+                    full_name=full_name,
+                )
+
+                if response.get('message'):
+                    answer = response.get('message')[0]
+                    self.clear_fields(action=None)
+                    self.error_label.display_success(answer)
+                else:
+                    answer = response.get('email')[0]
+                    self.error_label.display_error(answer)
+
+            else:
+                raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
+
+    def clear_fields(self, action) -> None:
+        """Метод очистки полей ввода и надписей."""
+        self.full_name_field.clear()
+        self.email_field.clear()
+        self.error_label.clear()
+        self.page.update()
 
     def to_profile(self, action) -> None:
         """Метод возвращения на страницу профиля."""
