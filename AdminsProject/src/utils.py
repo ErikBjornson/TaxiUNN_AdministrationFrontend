@@ -40,7 +40,7 @@ hdrs = {
 }
 
 
-async def send_login_request(email, password):
+async def send_login_request(email: str, password: str):
     """Функция для отправки данных для авторизации администратора."""
     url = f"{BASE_URL}/admins/auth/login"
     payload = {
@@ -52,7 +52,7 @@ async def send_login_request(email, password):
             return await response.json()
 
 
-async def send_verification_code(email):
+async def send_verification_code(email: str):
     """Функция для отправки кода верификации - часть восстановления пароля."""
     url = f"{BASE_URL}/admins/auth/password-recovery"
     payload = {
@@ -63,7 +63,7 @@ async def send_verification_code(email):
             return await response.json()
 
 
-async def do_verification(email, verification_code):
+async def do_verification(email: str, verification_code: str):
     """Функция для проверки корректности введённого кода верификации."""
     url = f"{BASE_URL}/admins/auth/password-recovery/verify"
     payload = {
@@ -75,7 +75,7 @@ async def do_verification(email, verification_code):
             return await response.json()
 
 
-async def change_password(email, new_password):
+async def change_password(email: str, new_password: str):
     """Функция смены пароля администратора."""
     url = f"{BASE_URL}/admins/auth/password-recovery/change"
     payload = {
@@ -84,4 +84,15 @@ async def change_password(email, new_password):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload, headers=hdrs) as response:
+            return await response.json()
+
+
+async def load_profile_data(access_token: str):
+    """Функция получения данных профиля администратора."""
+    url = f"{BASE_URL}/admins"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=url, headers=headers) as response:
             return await response.json()
