@@ -6,18 +6,32 @@ from .gui_elements import (
     InterfaceLabel,
     InterfaceField,
 )
-from .utils import dp, SCREEN_SIZE
+from .utils import (
+    dp,
+    create_tariff_req,
+    delete_tariff_req,
+    patch_tariff_req,
+    list_tariff_req,
+    SCREEN_SIZE,
+)
+import asyncio
 
 
 class TariffComponent(ft.Container):
     """Класс тарифа - компонента ft.ListView()."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        tariff_id: int,
+        name: str = "New tariff",
+        price: int = 1000,
+    ) -> None:
         """Инициализация компонента."""
         super().__init__()
+        self.tariff_id = tariff_id
         self.tariff_data = {
-            "name": "Новый тариф",
-            "cost": "0",
+            "name": name,
+            "cost": price,
         }
         self.buttons = {
             "edit": InterfaceButton(
@@ -151,7 +165,7 @@ class TariffComponent(ft.Container):
         )
         self.page.update()
 
-    def save(self, action) -> None:
+    async def save(self, action) -> None:
         """Метод сохранения изменённых данных тарифа."""
         name = self.page.session.get('tariff_name')
         cost = self.page.session.get('tariff_cost')
@@ -165,6 +179,8 @@ class TariffComponent(ft.Container):
         self.page.session.remove('tariff_name')
         self.page.session.remove('tariff_cost')
 
+        await self.change_tariff()
+
         self.content = self.fget_content("simple")
         self.border = ft.border.all(
             width=dp(4),
@@ -172,9 +188,46 @@ class TariffComponent(ft.Container):
         )
         self.page.update()
 
-    def delete(self, action) -> None:
+    async def change_tariff(self):
+        """Отправка запроса на изменение тарифа (редактирование)."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await patch_tariff_req(
+                    token,
+                    self.tariff_id,
+                    self.tariff_data['name'],
+                    int(self.tariff_data['cost']),
+                )
+
+                if response.get('message'):
+                    raise ValueError('Некорректные данные.')
+            else:
+                raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
+
+    async def delete(self, action) -> None:
         """Метод удаления тарифа из списка."""
+        await self.remove_tariff()
         tariffs_list.delete_component(self)
+
+    async def remove_tariff(self):
+        """Отправка запроса на удаление тарифа."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await delete_tariff_req(token, self.tariff_id)
+                if response.get('message'):
+                    raise ValueError('Неверное значение идентификатора.')
+            else:
+                raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
 
 
 class TariffsList(ft.Container):
@@ -198,9 +251,21 @@ class TariffsList(ft.Container):
         self.top = dp(210)
         self.left = dp(580)
 
-    def create_component(self) -> None:
+    def create_component(
+        self,
+        tariff_id: int,
+        name: str = "New tariff",
+        price: int = 1000,
+    ) -> None:
         """Метод создания нового компонента и добавления его в список."""
-        self.content.controls.append(TariffComponent())
+        self.content.controls.append(
+            TariffComponent(
+                tariff_id=tariff_id,
+                name=name,
+                price=price,
+            ),
+        )
+        self.page.update()
 
     def delete_component(self, component) -> None:
         """Метод удаления компонента из списка."""
@@ -222,10 +287,51 @@ class TariffsPage:
     def clear_fields(self) -> None:
         """Метод очистки полей ввода и надписей."""
 
-    def add_tariff(self, action) -> None:
+    async def add_tariff(self, action) -> None:
         """Метод обработчик события нажатия на кнопку добавления тарифа."""
-        tariffs_list.create_component()
-        self.page.update()
+        await self.process_adding_tariff()
+
+    async def process_adding_tariff(
+        self,
+        name: str = "tariff",
+        price: int = 1000,
+    ):
+        """Метод процессинга для добавления тарифа."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await create_tariff_req(token, name, price)
+
+                if response.get('id'):
+                    tariffs_list.create_component(tariff_id=response.get('id'))
+                    self.page.update()
+            else:
+                raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
+
+    async def load_tariffs_list(self):
+        """Метод загрузки списка тарифов с сервера."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await list_tariff_req(token)
+
+                if isinstance(response, list):
+                    for item in response:
+                        tariffs_list.create_component(
+                            tariff_id=item['id'],
+                            name=item['name'],
+                            price=item['price'],
+                        )
+                else:
+                    raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
 
     def to_profile(self, action) -> None:
         """Метод возвращения на страницу профиля."""
@@ -234,6 +340,7 @@ class TariffsPage:
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
+        asyncio.create_task(self.load_tariffs_list())
         self.page.add(
             ft.Column(
                 controls=[

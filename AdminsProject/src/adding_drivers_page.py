@@ -1,4 +1,4 @@
-from . import ft
+from . import ft, Optional
 from .gui_elements import (
     HugeLabel,
     MessageLabel,
@@ -6,7 +6,11 @@ from .gui_elements import (
     InputField,
     GoBackButton,
 )
-from .utils import dp, SCREEN_SIZE
+from .utils import (
+    dp,
+    list_tariff_req,
+    SCREEN_SIZE,
+)
 
 
 class AddDriversPage:
@@ -103,11 +107,29 @@ class AddDriversPage:
         self.error_label.clear()
         self.page.update()
 
-    def add_driver(self, action) -> None:
+    async def add_driver(self, action) -> None:
         """Метод обработки события нажатия на кнопку 'Добавить'."""
         if not all((self.fields[key].get_value() for key in self.fields)):
             self.error_label.display_error("empty_fields")
             return
+
+        await self.process_addding_driver()
+
+    async def process_adding_driver(self) -> Optional[Exception]:
+        """Метод процессинга добавления водителя."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await list_tariff_req(token)
+
+                if response.get('email'):
+                    self.load_profile_info(response)
+            else:
+                raise ValueError('Значение токена невалидно.')
+
+        except Exception as ex:
+            return ex
 
     def to_profile(self, action) -> None:
         """Метод возвращения на страницу профиля."""
