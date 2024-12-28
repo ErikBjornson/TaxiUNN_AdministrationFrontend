@@ -24,6 +24,9 @@ errors = {
     "User successfully registered.":
         "Новый администратор успешно зарегистрирован",
 
+    "Taxi fare with such name exist.":
+        "Отредактируйте все тарифы с именем 'New tariff'",
+
     "empty_fields":
         "Все поля должны быть заполнены",
 
@@ -56,42 +59,26 @@ def request(method: str):
 
             url, headers, payload = await func(*args, **kwargs)
             answer = None
+            session = aiohttp.ClientSession()
+            methods = {
+                "POST": session.post,
+                "GET": session.get,
+                "PATCH": session.patch,
+                "DELETE": session.delete,
+            }
 
-            async with aiohttp.ClientSession() as session:
+            async with session:
 
-                if method == "POST":
-                    async with session.post(
-                        url=url,
-                        json=payload,
-                        headers=headers,
-                    ) as post_response:
-                        answer = await post_response.json()
+                request_method = methods.get(method)
 
-                elif method == "GET":
-                    async with session.get(
-                        url=url,
-                        json=payload,
-                        headers=headers,
-                    ) as get_response:
-                        answer = await get_response.json()
+                async with request_method(
+                    url=url,
+                    json=payload,
+                    headers=headers,
+                ) as response:
+                    answer = await response.json()
 
-                elif method == "DELETE":
-                    async with session.delete(
-                        url=url,
-                        json=payload,
-                        headers=headers,
-                    ) as delete_response:
-                        answer = await delete_response.json()
-
-                elif method == "PATCH":
-                    async with session.patch(
-                        url=url,
-                        json=payload,
-                        headers=headers,
-                    ) as patch_response:
-                        answer = await patch_response.json()
-
-                return answer
+            return answer
 
         return wrapper
 

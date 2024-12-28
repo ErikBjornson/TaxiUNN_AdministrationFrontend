@@ -1,15 +1,15 @@
-from . import (
+from .. import (
     ft,
     Optional,
 )
-from .gui_elements import (
+from ..gui_elements import (
     HugeLabel,
     GrayLabel,
     MessageLabel,
     InputField,
     InterfaceButton,
 )
-from .utils import change_password, SCREEN_SIZE
+from ..utils import change_password, SCREEN_SIZE
 
 
 class ChangePasswordPage:
@@ -19,13 +19,6 @@ class ChangePasswordPage:
         """Метод инициализации страницы установления нового пароля."""
         self.page = page
         self.page.bgcolor = "#FFFFFF"
-
-        self.gray_label = GrayLabel(
-            text="Пароль должен содержать\nне менее 8 знаков",
-            top=290,
-            left=770,
-            width=380,
-        )
 
         self.first = InputField(
             top=370,
@@ -43,10 +36,6 @@ class ChangePasswordPage:
 
         self.error_label = MessageLabel(top=690)
 
-    def is_passwords_equals(self) -> bool:
-        """Метод проверки, что два введённых пароля верны."""
-        return self.first.get_value() == self.second.get_value()
-
     async def on_change_password(self, action) -> None:
         """Метод обработки заполнения полей создания и подтверждения пароля."""
         first = self.first.get_value()
@@ -56,7 +45,7 @@ class ChangePasswordPage:
             self.error_label.display_error("empty_fields")
             return
 
-        if not self.is_passwords_equals():
+        if first != second:
             self.error_label.display_error("different_passwords")
             return
 
@@ -106,7 +95,15 @@ class ChangePasswordPage:
                                 text="Установите\nновый пароль",
                                 top=144,
                             ),
-                            self.gray_label,
+                            GrayLabel(
+                                text=(
+                                    "Пароль должен содержать\n"
+                                    "не менее 8 знаков"
+                                ),
+                                top=290,
+                                left=770,
+                                width=380,
+                            ),
                             self.first,
                             self.second,
                             self.error_label,

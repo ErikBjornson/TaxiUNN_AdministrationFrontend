@@ -1,12 +1,12 @@
-from . import ft, Optional
-from .gui_elements import (
+from .. import ft, Optional
+from ..gui_elements import (
     HugeLabel,
     MessageLabel,
     InterfaceButton,
     InputField,
     GoBackButton,
 )
-from .utils import (
+from ..utils import (
     dp,
     list_tariff_req,
     SCREEN_SIZE,
@@ -116,7 +116,7 @@ class AddDriversPage:
         await self.process_addding_driver()
 
     async def process_adding_driver(self) -> Optional[Exception]:
-        """Метод процессинга добавления водителя."""
+        """Метод отправки запроса на добавление водителя."""
         try:
             token = self.page.session.get('access_token')
 

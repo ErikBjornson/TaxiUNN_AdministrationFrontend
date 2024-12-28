@@ -1,14 +1,14 @@
-from . import (
+from .. import (
     ft,
     Optional,
 )
-from .gui_elements import (
+from ..gui_elements import (
     HugeLabel,
     MessageLabel,
     InputField,
     InterfaceButton,
 )
-from .utils import send_verification_code, SCREEN_SIZE
+from ..utils import send_verification_code, SCREEN_SIZE
 
 
 class PasswordRecoveryPage:
