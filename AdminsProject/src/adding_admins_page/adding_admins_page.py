@@ -1,12 +1,12 @@
-from . import ft, Optional
-from .gui_elements import (
+from .. import ft, Optional
+from ..gui_elements import (
     HugeLabel,
     MessageLabel,
     InterfaceButton,
     InputField,
     GoBackButton,
 )
-from .utils import register_new_admin, SCREEN_SIZE
+from ..utils import register_new_admin, SCREEN_SIZE
 
 
 class AddAdminsPage:

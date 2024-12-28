@@ -1,15 +1,15 @@
-from . import (
+from .. import (
     ft,
     Optional,
 )
-from .gui_elements import (
+from ..gui_elements import (
     HugeLabel,
     MessageLabel,
     InputField,
     LinkButton,
     InterfaceButton,
 )
-from .utils import dp, send_login_request, SCREEN_SIZE
+from ..utils import dp, send_login_request, SCREEN_SIZE
 
 
 class SignInPage:
@@ -49,20 +49,22 @@ class SignInPage:
         """Метод, сохраняющий токен пользователя в сессии страницы."""
         try:
             response = await send_login_request(email, password)
+
             if response.get("access"):
                 access_token = response.get("access")
 
                 if access_token:
                     self.page.session.set("access_token", access_token)
                     self.clear_fields()
-
                     await self.to_profile(action=None)
+
                 else:
                     raise ValueError("Invalid access token!")
 
             else:
                 message = response[list(response.keys())[0]][0]
                 self.error_label.display_error(message)
+
         except Exception as ex:
             return ex
 

@@ -10,23 +10,24 @@ class HugeLabel(ft.Text):
         text: str,
         top: int,
         left: int = 665,
+        size: int = 50,
         align: ft.TextAlign = ft.TextAlign.CENTER,
         max_lines: int = 2,
     ) -> None:
         """Инициализация крупной надписи интерфейса."""
         super().__init__(
             value=text,
-            top=dp(top) - dp(50) / 2,
+            top=dp(top) - dp(size) / 2,
             left=dp(left),
             width=dp(600),
-            height=dp(110) + dp(50) + dp(10),
+            height=dp(110) + dp(size) + dp(10),
             weight=dp(600),
             text_align=align,
             max_lines=max_lines,
         )
         self.style = ft.TextStyle(
             font_family="Inter",
-            size=dp(50),
+            size=dp(size),
         )
         self.color = "#000000"
 
@@ -100,6 +101,7 @@ class MessageLabel(ft.Text):
     def clear(self) -> None:
         """Метод очистки надписи."""
         self.value = ""
+        self.page.update()
 
 
 class InterfaceLabel(ft.Text):
@@ -113,6 +115,7 @@ class InterfaceLabel(ft.Text):
         height: int,
         color: str = "#1C1C1C",
         align: ft.TextAlign = ft.TextAlign.LEFT,
+        max_lines: int = 1,
     ) -> None:
         """Инициализация класса простой надписи."""
         super().__init__(
@@ -123,6 +126,7 @@ class InterfaceLabel(ft.Text):
             width=dp(width),
             height=dp(height),
             text_align=align,
+            max_lines=max_lines,
         )
 
 
@@ -219,6 +223,7 @@ class InputField(ft.Container):
     def clear(self) -> None:
         """Метод очистки поля ввода."""
         self.content.controls[1].value = ""
+        self.page.update()
 
 
 class InterfaceButton(ft.ElevatedButton):
