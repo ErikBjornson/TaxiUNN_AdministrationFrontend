@@ -95,7 +95,7 @@ class MessageLabel(ft.Text):
     def display_success(self, message: str) -> None:
         """Метод для отображения системных сообщений."""
         self.color = "#43A048"
-        self.value = message
+        self.value = errors[message]
         self.page.update()
 
     def clear(self) -> None:
@@ -138,6 +138,7 @@ class InterfaceField(ft.TextField):
         size: int = 26,
         width: int = 732,
         height: int = 80,
+        bgcolor: str = "#E8E8E8",
         hint_text: str = "",
         suffix: str = "",
         is_password: bool = False,
@@ -151,7 +152,7 @@ class InterfaceField(ft.TextField):
             suffix_text=suffix,
             password=is_password,
             can_reveal_password=is_password,
-            bgcolor="#E8E8E8",
+            bgcolor=bgcolor,
             color="#000000",
             border_radius=dp(16),
             content_padding=dp(16),
@@ -294,7 +295,11 @@ class LinkButton(ft.TextButton):
 class GoBackButton(ft.ElevatedButton):
     """Класс кнопки возвращения на предыдущую страницу."""
 
-    def __init__(self, text: str, click: callable) -> None:
+    def __init__(
+        self,
+        click: callable,
+        text: str = "Меню",
+    ) -> None:
         """Инициализация класса кнопки."""
         super().__init__(
             top=dp(80),

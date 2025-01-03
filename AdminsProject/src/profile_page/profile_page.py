@@ -22,12 +22,14 @@ class ProfilePage:
                 image_path="../assets/clientsWorkImage.png",
                 text="Работа с клиентами",
                 left=240,
+                route="/profile/clients",
             ),
 
             "income_work": Frame(
                 image_path="../assets/incomeWorkImage.png",
                 text="Работа с доходами",
                 left=526,
+                route="/profile/incomes",
             ),
 
             "tariffs_work": Frame(
@@ -64,8 +66,11 @@ class ProfilePage:
 
                 if response.get('email'):
                     self.load_profile_info(response)
+                else:
+                    raise ValueError('Invalid access token.')
+
             else:
-                raise ValueError('Значение токена невалидно.')
+                raise ValueError('Token not found.')
 
         except Exception as ex:
             return ex

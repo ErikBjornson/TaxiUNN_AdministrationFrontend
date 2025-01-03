@@ -60,15 +60,18 @@ class ChangePasswordPage:
         try:
             response = await change_password(
                 email=self.page.session.get("user_email"),
-                new_password=new_password,
+                password=new_password,
             )
+
             if response.get("message"):
                 self.page.session.remove("user_email")
                 self.clear_fields()
                 await self.to_login(action=None)
+
             else:
                 message = response[list(response.keys())[0]][0]
                 self.error_label.display_error(message)
+
         except Exception as ex:
             return ex
 
