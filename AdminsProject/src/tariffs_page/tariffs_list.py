@@ -1,4 +1,4 @@
-from .. import ft
+from .. import ft, Optional
 from ..gui_elements import (
     InterfaceButton,
     InterfaceLabel,
@@ -6,6 +6,7 @@ from ..gui_elements import (
 )
 from ..utils import (
     dp,
+    list_tariff_req,
     patch_tariff_req,
     delete_tariff_req,
 )
@@ -182,7 +183,7 @@ class TariffComponent(ft.Container):
         )
         self.page.update()
 
-    async def change_tariff(self):
+    async def change_tariff(self) -> Optional[Exception]:
         """Отправка запроса на изменение тарифа (редактирование)."""
         try:
             token = self.page.session.get('access_token')
@@ -209,7 +210,7 @@ class TariffComponent(ft.Container):
         await self.remove_tariff()
         tariffs_list.delete_component(self)
 
-    async def remove_tariff(self):
+    async def remove_tariff(self) -> Optional[Exception]:
         """Отправка запроса на удаление тарифа."""
         try:
             token = self.page.session.get('access_token')
@@ -218,10 +219,15 @@ class TariffComponent(ft.Container):
                 response = await delete_tariff_req(token, self.tariff_id)
 
                 if response.get('message'):
-                    raise ValueError('Неверное значение идентификатора.')
+                    raise ValueError('Invalid access token or tariff id.')
+
+                elif response:
+                    raise ValueError(
+                        'Tariff cannot be deleted.',
+                    )
 
             else:
-                raise ValueError('Значение токена невалидно.')
+                raise ValueError('Token not found.')
 
         except Exception as ex:
             return ex
@@ -280,6 +286,30 @@ class TariffsList(ft.Container):
         """Метод полной очистки списка тарифов."""
         self.content.controls.clear()
         self.page.update()
+
+    async def load_tariffs_list(self) -> Optional[Exception]:
+        """Метод загрузки списка тарифов с сервера."""
+        try:
+            token = self.page.session.get('access_token')
+
+            if token:
+                response = await list_tariff_req(token)
+
+                if isinstance(response, list):
+                    for item in response:
+                        self.create_component(
+                            tariff_id=item.get('id'),
+                            name=item.get('name'),
+                            price=item.get('price'),
+                        )
+                else:
+                    raise ValueError('Invalid access token.')
+
+            else:
+                raise ValueError('Token not found.')
+
+        except Exception as ex:
+            return ex
 
 
 tariffs_list = TariffsList()

@@ -45,9 +45,11 @@ class PasswordRecoveryPage:
                 self.page.session.set("user_email", email)
                 self.clear_fields()
                 await self.to_verify(action=None)
+
             else:
                 message = response[list(response.keys())[0]][0]
                 self.error_label.display_error(message)
+
         except Exception as ex:
             return ex
 

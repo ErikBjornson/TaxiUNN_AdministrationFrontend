@@ -62,12 +62,13 @@ class AddAdminsPage:
                     answer = response.get('message')[0]
                     self.clear_fields(action=None)
                     self.error_label.display_success(answer)
+
                 else:
                     answer = response.get('email')[0]
                     self.error_label.display_error(answer)
 
             else:
-                raise ValueError('Значение токена невалидно.')
+                raise ValueError('Token not found.')
 
         except Exception as ex:
             return ex
@@ -93,7 +94,6 @@ class AddAdminsPage:
                     ft.Stack(
                         controls=[
                             GoBackButton(
-                                text="Меню",
                                 click=self.to_profile,
                             ),
                             HugeLabel(

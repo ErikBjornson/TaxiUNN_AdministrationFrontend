@@ -3,11 +3,22 @@ from ..utils import dp
 
 
 class VerificationCodeInput(ft.Container):
-    """Вспомогательный класс - создаёт поле ввода для кода верификации."""
+    """Класс поля ввода кода верификации при восстановлении пароля."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        top: int = 470,
+        left: int = 695,
+        width: int = 530,
+        height: int = 90,
+    ) -> None:
         """Инициализация кастомного поля ввода."""
-        super().__init__()
+        super().__init__(
+            top=dp(top),
+            left=dp(left),
+            width=dp(width),
+            height=dp(height),
+        )
         self.content = ft.Stack(
             controls=[
                 ft.Column(
@@ -27,7 +38,6 @@ class VerificationCodeInput(ft.Container):
                                 color="#FFFFFF",
                             ),
                             on_change=self.to_next,
-                            on_focus=self.to_last_entered,
                             text_align=ft.TextAlign.CENTER,
                             text_style=ft.TextStyle(
                                 size=dp(30),
@@ -48,39 +58,22 @@ class VerificationCodeInput(ft.Container):
         self.array = self.content.controls
         self.values = ""
 
-        self.top = dp(471)
-        self.left = dp(695)
-        self.width = dp(530)
-        self.height = dp(90)
-
     def fget_section(self, index: int) -> None:
         """Метод get для получения доступа к ячейке по индексу."""
         return self.array[index].controls[0]
-
-    def fset_section(self, index: int, value: str = "") -> None:
-        """Метод set для очистки ячеек."""
-        self.fget_section(index).value = value
-
-    def get_value_of_section(self, index: int) -> None:
-        """Метод get для получения значения ячейки по индексу."""
-        return self.fget_section(index).value
 
     def get_code(self) -> str:
         """Метод get для вводимого кода - используется для валидации."""
         return self.values
 
-    def to_last_entered(self, action) -> None:
-        """Метод переводит курсор на последнюю незаполненную ячейку."""
-        index = 0 if self.index == 0 else self.index
-
-        self.fget_section(index).focus()
-
     def to_next(self, action) -> None:
         """Метод перехода к следующей ячейке, если текущая уже заполнена."""
-        if not self.get_value_of_section(self.index):
-            self.to_previous(action=None)
+        if not self.fget_section(self.index).value:
+            self.index = 0 if self.index == 0 else self.index - 1
+            self.fget_section(self.index).focus()
+            return
 
-        self.values += self.get_value_of_section(self.index)
+        self.values += self.fget_section(self.index).value
 
         if self.index < 4:
             self.fget_section(self.index + 1).focus()
@@ -90,6 +83,6 @@ class VerificationCodeInput(ft.Container):
         """Метод очистки ячеек."""
         self.values = ""
         for index in range(5):
-            self.fset_section(index)
+            self.fget_section(index).value = ""
         self.index = 0
-        self.to_last_entered(action=None)
+        self.fget_section(self.index).focus()

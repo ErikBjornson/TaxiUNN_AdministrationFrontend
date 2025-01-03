@@ -47,12 +47,15 @@ class PasswordRecoveryVerifyPage:
                 email=self.page.session.get("user_email"),
                 verification_code=code,
             )
+
             if response.get("message"):
                 self.clear_fields()
                 await self.to_change_password(action=None)
+
             else:
                 message = response[list(response.keys())[0]][0]
                 self.error_label.display_error(message)
+
         except Exception as ex:
             return ex
 

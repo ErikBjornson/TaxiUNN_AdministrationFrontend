@@ -7,10 +7,11 @@ from ..gui_elements import (
     GoBackButton,
 )
 from ..utils import (
-    dp,
-    list_tariff_req,
+    register_new_driver,
     SCREEN_SIZE,
 )
+from .tariffs_dropdown_list import TariffsDropdownList
+import asyncio
 
 
 class AddDriversPage:
@@ -22,7 +23,7 @@ class AddDriversPage:
         self.page.bgcolor = "#FFFFFF"
 
         self.fields = {
-            "name": InputField(
+            "full_name": InputField(
                 top=180,
                 left=462,
                 text="Имя Фамилия",
@@ -35,7 +36,7 @@ class AddDriversPage:
                 text="Почта",
                 width=480,
             ),
-            "brand": InputField(
+            "make": InputField(
                 top=350,
                 left=462,
                 text="Марка автомобиля",
@@ -56,7 +57,7 @@ class AddDriversPage:
                 width=480,
                 hint_text="Чёрный",
             ),
-            "number": InputField(
+            "state_number": InputField(
                 top=500,
                 left=970,
                 text="Государственный номер",
@@ -65,47 +66,9 @@ class AddDriversPage:
             ),
         }
 
-        self.tariffs_list = ft.Container(
-            content=ft.Dropdown(
-                width=dp(420),
-                options=[
-                    ft.dropdown.Option('Эконом'),
-                    ft.dropdown.Option('Комфорт'),
-                    ft.dropdown.Option('Комфорт+'),
-                ],
-                height=dp(80),
-                hint_text="Тариф...",
-                hint_style=ft.TextStyle(
-                    font_family="Inter",
-                    size=dp(26),
-                ),
-                padding=ft.padding.all(dp(5)),
-                text_style=ft.TextStyle(
-                    font_family="Inter",
-                    size=dp(26),
-                    color="#000000",
-                ),
-                bgcolor="#E8E8E8",
-                icon_enabled_color="#4862E5",
-                icon_disabled_color="#4862E5",
-                border_radius=dp(22),
-                border_color="#4862E5",
-                border_width=dp(3),
-            ),
-            top=dp(660),
-            left=dp(750),
-            width=dp(420),
-            height=dp(80),
-        )
+        self.tariffs_list = TariffsDropdownList()
 
         self.error_label = MessageLabel(top=755)
-
-    def clear_fields(self, action) -> None:
-        """Метод очистки полей ввода и надписей."""
-        for _, control in self.fields.items():
-            control.clear()
-        self.error_label.clear()
-        self.page.update()
 
     async def add_driver(self, action) -> None:
         """Метод обработки события нажатия на кнопку 'Добавить'."""
@@ -113,7 +76,11 @@ class AddDriversPage:
             self.error_label.display_error("empty_fields")
             return
 
-        await self.process_addding_driver()
+        if not self.tariffs_list.get_value():
+            self.error_label.display_error("choose_tariff")
+            return
+
+        await self.process_adding_driver()
 
     async def process_adding_driver(self) -> Optional[Exception]:
         """Метод отправки запроса на добавление водителя."""
@@ -121,15 +88,39 @@ class AddDriversPage:
             token = self.page.session.get('access_token')
 
             if token:
-                response = await list_tariff_req(token)
+                response = await register_new_driver(
+                    access_token=token,
+                    fare_id=self.tariffs_list.get_value(),
+                    full_name=self.fields.get('full_name').get_value(),
+                    email=self.fields.get('email').get_value(),
+                    make=self.fields.get('make').get_value(),
+                    model=self.fields.get('model').get_value(),
+                    color=self.fields.get('color').get_value(),
+                    state_number=self.fields.get('state_number').get_value(),
+                )
 
-                if response.get('email'):
-                    self.load_profile_info(response)
+                if response.get('message'):
+                    self.error_label.display_success(
+                        response.get('message')[0],
+                    )
+                    self.clear_fields()
+
+                else:
+                    self.error_label.display_error(
+                        response.get('email')[0],
+                    )
             else:
-                raise ValueError('Значение токена невалидно.')
+                raise ValueError('Token not found.')
 
         except Exception as ex:
             return ex
+
+    def clear_fields(self, action) -> None:
+        """Метод очистки полей ввода и надписей."""
+        for _, control in self.fields.items():
+            control.clear()
+        self.error_label.clear()
+        self.page.update()
 
     def to_profile(self, action) -> None:
         """Метод возвращения на страницу профиля."""
@@ -139,13 +130,13 @@ class AddDriversPage:
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
+        asyncio.create_task(self.tariffs_list.load_tariffs_list())
         self.page.add(
             ft.Column(
                 controls=[
                     ft.Stack(
                         controls=[
                             GoBackButton(
-                                text="Меню",
                                 click=self.to_profile,
                             ),
                             HugeLabel(

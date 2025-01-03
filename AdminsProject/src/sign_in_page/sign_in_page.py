@@ -48,7 +48,10 @@ class SignInPage:
     async def process_login(self, email, password) -> Optional[Exception]:
         """Метод, сохраняющий токен пользователя в сессии страницы."""
         try:
-            response = await send_login_request(email, password)
+            response = await send_login_request(
+                email=email,
+                password=password,
+            )
 
             if response.get("access"):
                 access_token = response.get("access")
@@ -59,7 +62,7 @@ class SignInPage:
                     await self.to_profile(action=None)
 
                 else:
-                    raise ValueError("Invalid access token!")
+                    raise ValueError("Invalid access token.")
 
             else:
                 message = response[list(response.keys())[0]][0]

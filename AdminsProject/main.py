@@ -3,6 +3,8 @@ from src import (
     WelcomePage,
     SignInPage,
     ProfilePage,
+    ClientsWorkPage,
+    IncomeWorkPage,
     TariffsPage,
     AddDriversPage,
     AddAdminsPage,
@@ -23,6 +25,8 @@ class Navigation:
             "/": WelcomePage(page),
             "/login": SignInPage(page),
             "/profile": ProfilePage(page),
+            "/profile/clients": ClientsWorkPage(page),
+            "/profile/incomes": IncomeWorkPage(page),
             "/profile/tariffs": TariffsPage(page),
             "/profile/add-drivers": AddDriversPage(page),
             "/profile/add-admins": AddAdminsPage(page),
@@ -34,7 +38,7 @@ class Navigation:
         self.page.go(self.page.route)
 
     async def change_route(self, action) -> None:
-        """Метод обновляет содержимое страницы в зависимости от маршрута."""
+        """Метод обновления содержимого страницы в зависимости от маршрута."""
         self.page.views.clear()
         controls, color = self.pages[self.page.route].display(action=None)
         self.page.views.append(

@@ -1,4 +1,4 @@
-from .. import ft
+from .. import ft, Optional
 from ..gui_elements import (
     HugeLabel,
     MessageLabel,
@@ -7,7 +7,6 @@ from ..gui_elements import (
 )
 from ..utils import (
     create_tariff_req,
-    list_tariff_req,
     SCREEN_SIZE,
 )
 from .tariffs_list import tariffs_list
@@ -34,7 +33,7 @@ class TariffsPage:
         self,
         name: str = "New tariff",
         price: int = 1000,
-    ):
+    ) -> Optional[Exception]:
         """Метод отправки запроса на добавление тарифа."""
         try:
             token = self.page.session.get('access_token')
@@ -58,34 +57,10 @@ class TariffsPage:
                     )
 
                 else:
-                    raise ValueError('Значение токена невалидно.')
+                    raise ValueError('Invalid access token.')
 
             else:
-                raise ValueError('Токен не найден.')
-
-        except Exception as ex:
-            return ex
-
-    async def load_tariffs_list(self):
-        """Метод загрузки списка тарифов с сервера."""
-        try:
-            token = self.page.session.get('access_token')
-
-            if token:
-                response = await list_tariff_req(token)
-
-                if isinstance(response, list):
-                    for item in response:
-                        tariffs_list.create_component(
-                            tariff_id=item['id'],
-                            name=item['name'],
-                            price=item['price'],
-                        )
-                else:
-                    raise ValueError('Значение токена невалидно.')
-
-            else:
-                raise ValueError('Токен не найден.')
+                raise ValueError('Token not found.')
 
         except Exception as ex:
             return ex
@@ -98,14 +73,13 @@ class TariffsPage:
     def display(self, action) -> tuple[list[ft.Control], str]:
         """Метод отображения формы на экране."""
         self.page.clean()
-        asyncio.create_task(self.load_tariffs_list())
+        asyncio.create_task(tariffs_list.load_tariffs_list())
         self.page.add(
             ft.Column(
                 controls=[
                     ft.Stack(
                         controls=[
                             GoBackButton(
-                                text="Меню",
                                 click=self.to_profile,
                             ),
                             HugeLabel(
